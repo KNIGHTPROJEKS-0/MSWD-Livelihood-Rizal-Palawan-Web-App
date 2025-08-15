@@ -1,0 +1,15 @@
+{
+  "files.associations": {
+    "**/debian/*.install": "plain",
+    "*.embeddedhtml": "html",
+    "*.sw.json": "json",
+    "*.sw.yaml": "yaml",
+    "*.sw.yml": "yaml",
+    "*.dash.json": "json",
+    "*.dash.yaml": "yaml",
+    "*.dash.yml": "yaml",
+    "plyconfig.json": "jsonc"
+  },
+  "nxConsole.generateAiAgentRules": true,
+  "git.ignoreLimitWarning": true
+}

@@ -1,0 +1,123 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: mswd-postgres
+    environment:
+      POSTGRES_DB: mswd_livelihood
+      POSTGRES_USER: mswd_user
+      POSTGRES_PASSWORD: mswd_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./services/api/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - mswd-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mswd_user -d mswd_livelihood"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: mswd-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - mswd-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # FastAPI Backend
+  api:
+    build:
+      context: ./services/api
+      dockerfile: Dockerfile
+    container_name: mswd-api
+    environment:
+      - DATABASE_URL=postgresql://mswd_user:mswd_password@postgres:5432/mswd_livelihood
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=your-secret-key-here
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
+      - ENVIRONMENT=development
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - mswd-network
+    volumes:
+      - ./services/api:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # N8N Workflow Automation
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: mswd-n8n
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=mswd_user
+      - DB_POSTGRESDB_PASSWORD=mswd_password
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=admin123
+      - WEBHOOK_URL=http://localhost:5678
+      - GENERIC_TIMEZONE=Asia/Manila
+    ports:
+      - "5678:5678"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - mswd-network
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+  # Celery Worker
+  worker:
+    build:
+      context: ./services/api
+      dockerfile: Dockerfile
+    container_name: mswd-worker
+    environment:
+      - DATABASE_URL=postgresql://mswd_user:mswd_password@postgres:5432/mswd_livelihood
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=your-secret-key-here
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - mswd-network
+    volumes:
+      - ./services/api:/app
+    command: celery -A app.core.celery worker --loglevel=info
+
+volumes:
+  postgres_data:
+  redis_data:
+  n8n_data:
+
+networks:
+  mswd-network:
+    driver: bridge

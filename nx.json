@@ -1,0 +1,9 @@
+{
+  "installation": {
+    "version": "21.3.11",
+    "plugins": {
+      "@nx/vite": "21.3.11"
+    }
+  },
+  "$schema": "./node_modules/nx/schemas/nx-schema.json"
+}
