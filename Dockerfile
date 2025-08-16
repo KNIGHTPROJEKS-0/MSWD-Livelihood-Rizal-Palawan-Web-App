@@ -15,8 +15,8 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
-# Build the web app
-RUN cd apps/web && pnpm run build
+# Install web app dependencies and build
+RUN cd apps/web && pnpm install && pnpm run build
 
 # Expose port
 EXPOSE $PORT
