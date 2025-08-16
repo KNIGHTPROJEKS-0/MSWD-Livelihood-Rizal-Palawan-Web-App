@@ -1,5 +1,4 @@
 [build]
-builder = "nixpacks"
 watchPatterns = ["services/**"]
 
 [deploy]
@@ -47,7 +46,8 @@ name = "mswd-n8n"
 root = "."
 
 [services.build]
-builder = "nixpacks"
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
 
 [services.deploy]
 startCommand = "n8n start"
@@ -66,7 +66,8 @@ name = "mswd-frontend"
 root = "apps/web"
 
 [services.build]
-builder = "nixpacks"
+builder = "dockerfile"
+dockerfilePath = "../../Dockerfile"
 
 [services.deploy]
 startCommand = "npm run build && npm run preview"
