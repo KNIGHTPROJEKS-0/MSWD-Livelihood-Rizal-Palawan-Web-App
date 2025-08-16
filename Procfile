@@ -1,0 +1,1 @@
+web: cd apps/web && pnpm run preview --host 0.0.0.0 --port $PORT

@@ -13,7 +13,7 @@
     "type-check": "tsc --noEmit",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "preview": "vite preview"
+    "preview": "vite preview --host 0.0.0.0 --port ${PORT:-3000}"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.0",

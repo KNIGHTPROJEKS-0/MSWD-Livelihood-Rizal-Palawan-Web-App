@@ -8,8 +8,9 @@
     "dev:api": "cd services/api && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
     "dev:emulators": "firebase emulators:start",
     "dev:webflow": "cd apps/webflow-extension && npm run dev",
-    "build": "cd apps/web && npm run build",
+    "build": "cd apps/web && pnpm run build",
     "build:webflow": "cd apps/webflow-extension && npm run build",
+    "start": "cd apps/web && pnpm run preview --host 0.0.0.0 --port $PORT",
     "deploy": "firebase deploy",
     "deploy:hosting": "firebase deploy --only hosting",
     "setup": "npm install && cd apps/web && npm install && cd ../webflow-extension && npm install && cd ../../services/api && pip install -r requirements.txt"
