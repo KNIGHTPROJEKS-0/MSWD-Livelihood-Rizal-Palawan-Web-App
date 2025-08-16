@@ -14,7 +14,6 @@ import {
   HStack,
   Badge,
 } from '@chakra-ui/react';
-import '@chakra-ui/react/dist/chakra-ui-react.cjs';
 import { useAuthStore } from '../../store/authStore'
 
 const DashboardPage = () => {

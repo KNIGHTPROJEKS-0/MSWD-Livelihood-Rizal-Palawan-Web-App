@@ -1,6 +1,5 @@
 import {
   Box,
-  CloseButton,
   Flex,
   Icon,
   useColorModeValue,

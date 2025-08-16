@@ -4,5 +4,6 @@ __author__ = "MSWD Development Team"
 
 from app.core.config import settings
 from app.core.database import engine, AsyncSessionLocal, Base
+from app import services
 
-__all__ = ["settings", "engine", "AsyncSessionLocal", "Base"]
+__all__ = ["settings", "engine", "AsyncSessionLocal", "Base", "services"]

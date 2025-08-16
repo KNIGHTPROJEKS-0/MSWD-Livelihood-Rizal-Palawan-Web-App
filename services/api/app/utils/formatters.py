@@ -154,6 +154,10 @@ def format_phone(phone: str, format_type: str = "local") -> str:
     
     return local_digits
 
+def format_phone_number(phone: str, format_type: str = "local") -> str:
+    """Alias for format_phone function for backward compatibility"""
+    return format_phone(phone, format_type)
+
 def format_address(address_parts: dict) -> str:
     """Format complete address from parts"""
     parts = []

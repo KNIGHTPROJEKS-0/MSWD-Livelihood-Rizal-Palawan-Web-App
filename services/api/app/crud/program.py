@@ -4,7 +4,7 @@ from sqlalchemy import select, and_, or_
 from sqlalchemy.orm import selectinload
 
 from ..models.program import Program
-from ..models.user import Application
+from ..models.application import Application
 from ..schemas.program import ProgramCreate, ProgramUpdate, ApplicationCreate
 from .base import CRUDBase
 

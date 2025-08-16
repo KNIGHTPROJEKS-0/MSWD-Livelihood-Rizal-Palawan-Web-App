@@ -1,53 +1,47 @@
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPBearer
 from contextlib import asynccontextmanager
-import uvicorn
-from .core.config import settings
-from .core.database import engine, Base
-from .api.v1.api import api_router
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from app.api.v1.api import api_router
+from app.core.config import settings
+from app.core.firebase import ensure_firebase_initialized
 
-# Create tables
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    print("Starting up...")
+    
+    # Initialize Firebase Admin SDK
+    ensure_firebase_initialized()
+    print("Firebase Admin SDK initialized")
+    
     yield
+    
     # Shutdown
-    pass
+    print("Shutting down...")
 
 app = FastAPI(
-    title="MSWD Livelihood Program API",
-    description="API for managing livelihood programs in Rizal, Palawan",
-    version="1.0.0",
+    title=settings.PROJECT_NAME,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
     lifespan=lifespan
 )
 
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.ALLOWED_HOSTS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Set all CORS enabled origins
+if settings.ALLOWED_HOSTS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.ALLOWED_HOSTS,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
-# Include API router
-app.include_router(api_router, prefix="/api/v1")
+app.include_router(api_router, prefix=settings.API_V1_STR)
+
+# Root health endpoint for Railway
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "message": "MSWD Livelihood API is running"}
 
 @app.get("/")
 async def root():
-    return {"message": "MSWD Livelihood Program API", "version": "1.0.0"}
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy"}
-
-if __name__ == "__main__":
-    uvicorn.run(
-        "app.main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True
-    )
+    return {"message": "MSWD Livelihood Rizal Palawan API", "version": "1.0.0", "docs": "/docs"}

@@ -9,6 +9,7 @@ class UserRole(str, enum.Enum):
     ADMIN = "admin"
     BENEFICIARY = "beneficiary"
 
+# Add these fields to your User model
 class User(Base):
     __tablename__ = "users"
 
@@ -30,3 +31,8 @@ class User(Base):
     applications = relationship("Application", foreign_keys="Application.user_id", back_populates="user")
     beneficiaries = relationship("Beneficiary", back_populates="user")
     audit_logs = relationship("AuditLog", back_populates="user")
+    
+    # GitLab OAuth fields
+    gitlab_id: Optional[str] = Column(String, unique=True, index=True)
+    gitlab_username: Optional[str] = Column(String)
+    gitlab_access_token: Optional[str] = Column(Text)  # Store encrypted in production

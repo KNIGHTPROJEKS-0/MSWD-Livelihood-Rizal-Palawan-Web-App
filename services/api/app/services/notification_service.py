@@ -18,10 +18,10 @@ class NotificationService:
     def __init__(self):
         self.smtp_server = settings.SMTP_SERVER
         self.smtp_port = settings.SMTP_PORT
-        self.smtp_username = settings.SMTP_USERNAME
+        self.smtp_username = settings.SMTP_USER
         self.smtp_password = settings.SMTP_PASSWORD
-        self.from_email = settings.FROM_EMAIL
-        self.from_name = settings.FROM_NAME or "MSWD Livelihood Program"
+        self.from_email = settings.EMAILS_FROM_EMAIL
+        self.from_name = settings.EMAILS_FROM_NAME or "MSWD Livelihood Program"
     
     def _send_email(self, to_email: str, subject: str, html_content: str, text_content: Optional[str] = None) -> bool:
         """Send email using SMTP"""

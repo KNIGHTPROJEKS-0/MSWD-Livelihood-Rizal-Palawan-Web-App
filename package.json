@@ -1,0 +1,23 @@
+{
+  "name": "mswd-livelihood-rizal-palawan",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "./dev-setup.sh",
+    "dev:web": "cd apps/web && npm run dev",
+    "dev:api": "cd services/api && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "dev:emulators": "firebase emulators:start",
+    "dev:webflow": "cd apps/webflow-extension && npm run dev",
+    "build": "cd apps/web && npm run build",
+    "build:webflow": "cd apps/webflow-extension && npm run build",
+    "deploy": "firebase deploy",
+    "deploy:hosting": "firebase deploy --only hosting",
+    "setup": "npm install && cd apps/web && npm install && cd ../webflow-extension && npm install && cd ../../services/api && pip install -r requirements.txt"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.0.0"
+  },
+  "dependencies": {
+    "@webstudio-is/react-sdk": "^0.228.0"
+  }
+}

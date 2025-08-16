@@ -1,7 +1,6 @@
 """Utility Functions Package"""
 from app.utils.helpers import (
     generate_otp, 
-    format_phone_number, 
     calculate_age,
     generate_secure_token,
     generate_reference_number,
@@ -43,6 +42,7 @@ from app.utils.formatters import (
     format_date, 
     format_name,
     format_phone,
+    format_phone_number,
     format_address,
     format_percentage,
     format_file_size,
@@ -99,6 +99,7 @@ __all__ = [
     "format_date",
     "format_name",
     "format_phone",
+    "format_phone_number",
     "format_address",
     "format_percentage",
     "format_duration",

@@ -1,9 +1,78 @@
 {
+  "name": "mswd-livelihood-web-app",
+  "root": "./",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "nx serve mswd-livelihood-web-app",
+    "build": "nx build mswd-livelihood-web-app",
+    "serve": "nx serve mswd-livelihood-web-app",
+    "lint": "nx lint mswd-livelihood-web-app",
+    "test": "nx test mswd-livelihood-web-app"
+  },
+  "$schema": "./apps/web/node_modules/nx/schemas/nx-schema.json",
   "installation": {
     "version": "21.3.11",
     "plugins": {
       "@nx/vite": "21.3.11"
     }
   },
-  "$schema": "./node_modules/nx/schemas/nx-schema.json"
+  "targetDefaults": {
+    "build": {
+      "inputs": [
+        "src/**/*",
+        "package.json",
+        "tsconfig.json",
+        "tsconfig.app.json",
+        "tsconfig.spec.json",
+        "vite.config.ts"
+      ],
+      "outputs": [
+        "dist/apps/mswd-livelihood-web-app"
+      ]
+    },
+    "serve": {
+      "inputs": [
+        "dist/apps/mswd-livelihood-web-app"
+      ],
+      "outputs": [
+        "dist/apps/mswd-livelihood-web-app"
+      ],
+      "options": {
+        "buildTarget": "mswd-livelihood-web-app:build"
+      }
+    }
+  },
+  "projects": {
+    "mswd-livelihood-web-app": {
+      "root": "apps/mswd-livelihood-web-app",
+      "sourceRoot": "apps/mswd-livelihood-web-app/src",
+      "projectType": "application",
+      "targets": {
+        "build": {
+          "executor": "@nx/vite:build",
+          "options": {
+            "outputPath": "dist/apps/mswd-livelihood-web-app"
+          },
+          "configurations": {
+            "production": {
+              "optimize": true
+            }
+          }
+        },
+        "serve": {
+          "executor": "@nx/vite:serve",
+          "options": {
+            "buildTarget": "mswd-livelihood-web-app:build"
+          }
+        },
+        "lint": {
+          "executor": "@nx/eslint:lint"
+        },
+        "test": {
+          "executor": "@nx/jest:jest"
+        }
+      }
+    }
+  }
 }

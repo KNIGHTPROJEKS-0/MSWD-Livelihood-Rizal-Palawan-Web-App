@@ -1,0 +1,13 @@
+{
+  "name": "MSWD-Livelihood-Extension",
+  "publicDir": "public",
+  "size": "default",
+  "apiVersion": "2",
+  "description": "MSWD Livelihood management extension for Webflow",
+  "permissions": [
+    "sites:read",
+    "sites:write",
+    "cms:read",
+    "cms:write"
+  ]
+}

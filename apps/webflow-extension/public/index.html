@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MSWD Livelihood Extension</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h2>MSWD Livelihood Manager</h2>
+    
+    <form id="mswd-form">
+      <div class="form-group">
+        <label for="name">Beneficiary Name:</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="program">Program:</label>
+        <select id="program" name="program" required>
+          <option value="">Select Program</option>
+          <option value="livelihood">Livelihood Assistance</option>
+          <option value="social-pension">Social Pension</option>
+          <option value="child-services">Child Services</option>
+          <option value="family-support">Family Support</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="status">Status:</label>
+        <select id="status" name="status" required>
+          <option value="">Select Status</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="active">Active</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="barangay">Barangay:</label>
+        <select id="barangay" name="barangay" required>
+          <option value="">Select Barangay</option>
+          <option value="barangay-1">Barangay 1</option>
+          <option value="barangay-2">Barangay 2</option>
+          <option value="barangay-3">Barangay 3</option>
+        </select>
+      </div>
+      
+      <button type="submit" class="btn-primary">Create Component</button>
+    </form>
+    
+    <button id="create-beneficiary" class="btn-secondary">Add to Selected Element</button>
+  </div>
+  
+  <script src="../src/index.js"></script>
+</body>
+</html>

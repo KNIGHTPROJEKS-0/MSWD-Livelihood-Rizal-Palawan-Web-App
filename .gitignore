@@ -1,8 +1,80 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
 
-.nx/installation
+# Logs & debug outputs
+*.log
+dataconnect-debug.log
+firebase-debug.log
+pglite-debug.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Node.js dependencies
+node_modules/
+**/node_modules/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Nx build & cache
 .nx/cache
+.nx/installation
 .nx/workspace-data
 
+# IDE & editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
 
+# Cursor / Trae / Kiro rules & temp
+.cursor/
+.trae/
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
+
+# Firebase local state
+.firebase/
+firebase-debug.*
+firebase-export.json
+
+# Docker local files
+docker-data/
+.docker/
+docker-compose.override.yml
+
+# Build outputs
+dist/
+build/
+out/
+tmp/
+.cache/
+coverage/
+
+# Uploads & runtime storage
+services/api/uploads/
+
+# Misc temp & backup
+*.pid
+*.seed
+*.tgz
+*.bak
+*.tmp
+*.temp
+*.swp
+*.swo
+*.sw?
+
+# Backend secrets
+services/api/.secrets/
+*.pem
+*.key
+*-adminsdk-*.json

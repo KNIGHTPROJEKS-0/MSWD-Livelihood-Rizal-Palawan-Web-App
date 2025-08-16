@@ -8,9 +8,10 @@ from pydantic import ValidationError
 
 from ..core.config import settings
 from ..core.security import verify_password, get_password_hash
+from ..core.database import get_db
 from ..models.user import User
 from ..schemas.user import UserCreate, UserUpdate
-from ..schemas.auth import TokenPayload
+from ..schemas.auth import TokenData
 from .base import CRUDBase
 
 reusable_oauth2 = OAuth2PasswordBearer(
@@ -76,7 +77,7 @@ async def get_current_user(
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
-        token_data = TokenPayload(**payload)
+        token_data = TokenData(**payload)
     except (jwt.JWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -104,7 +105,3 @@ def get_current_active_superuser(
             status_code=400, detail="The user doesn't have enough privileges"
         )
     return current_user
-
-
-# Import get_db here to avoid circular imports
-from ..core.database import get_db
