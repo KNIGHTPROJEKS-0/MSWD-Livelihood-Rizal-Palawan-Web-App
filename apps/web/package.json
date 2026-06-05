@@ -33,9 +33,7 @@
     "react-router-dom": "^6.20.1",
     "webflow-api": "^2.4.1",
     "zod": "^3.22.4",
-    "zustand": "^4.4.7",
-    "@webstudio-is/sdk": "^0.1.0",
-    "@webstudio-is/react-sdk": "^0.1.0"
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",
