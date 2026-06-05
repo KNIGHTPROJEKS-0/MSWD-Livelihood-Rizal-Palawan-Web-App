@@ -1,0 +1,1 @@
+- [MSWD App Architecture](mswd-arch.md) — JWT auth (no Firebase), sync SQLAlchemy, pnpm frontend, bcrypt pinned to 4.0.1 for passlib compat

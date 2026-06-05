@@ -1,16 +1,33 @@
 import { create } from 'zustand'
-import { User } from 'firebase/auth'
+import { persist } from 'zustand/middleware'
 
-interface AuthState {
-  user: User | null
-  loading: boolean
-  setUser: (user: User | null) => void
-  setLoading: (loading: boolean) => void
+export interface AuthUser {
+  id: number
+  email: string
+  first_name: string | null
+  last_name: string | null
+  role: 'superadmin' | 'admin' | 'beneficiary'
+  barangay: string | null
+  is_active: boolean
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  loading: true,
-  setUser: (user) => set({ user }),
-  setLoading: (loading) => set({ loading }),
-}))
+interface AuthState {
+  user: AuthUser | null
+  token: string | null
+  isAuthenticated: boolean
+  setAuth: (user: AuthUser, token: string) => void
+  logout: () => void
+}
+
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      setAuth: (user, token) => set({ user, token, isAuthenticated: true }),
+      logout: () => set({ user: null, token: null, isAuthenticated: false }),
+    }),
+    { name: 'mswd-auth' }
+  )
+)

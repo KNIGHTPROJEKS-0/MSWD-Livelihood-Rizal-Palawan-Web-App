@@ -1,38 +1,28 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Enum
+from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-import enum
-from ..core.database import Base
+from app.core.database import Base
 
-class UserRole(str, enum.Enum):
-    SUPERADMIN = "superadmin"
-    ADMIN = "admin"
-    BENEFICIARY = "beneficiary"
 
-# Add these fields to your User model
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
-    name = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
-    role = Column(Enum(UserRole), default=UserRole.BENEFICIARY)
-    barangay = Column(String, nullable=True)
-    phone = Column(String, nullable=True)
-    address = Column(String, nullable=True)
-    occupation = Column(String, nullable=True)
+    first_name = Column(String(100))
+    last_name = Column(String(100))
+    phone = Column(String(20))
+    role = Column(String(20), nullable=False, default="beneficiary")
+    barangay = Column(String(100))
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
 
-    # Relationships
-    applications = relationship("Application", foreign_keys="Application.user_id", back_populates="user")
-    beneficiaries = relationship("Beneficiary", back_populates="user")
-    audit_logs = relationship("AuditLog", back_populates="user")
-    
-    # GitLab OAuth fields
-    gitlab_id: Optional[str] = Column(String, unique=True, index=True)
-    gitlab_username: Optional[str] = Column(String)
-    gitlab_access_token: Optional[str] = Column(Text)  # Store encrypted in production
+    applications = relationship("Application", foreign_keys="Application.user_id", back_populates="user", lazy="dynamic")
+
+    @property
+    def full_name(self):
+        parts = [self.first_name, self.last_name]
+        return " ".join(p for p in parts if p) or self.email
