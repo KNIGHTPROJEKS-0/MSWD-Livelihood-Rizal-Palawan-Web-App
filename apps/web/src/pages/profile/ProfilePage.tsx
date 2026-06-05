@@ -16,101 +16,106 @@ import {
   useToast,
   Select,
   Divider,
+  Badge,
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useAuthStore } from '../../store/authStore'
+
+const BARANGAYS = [
+  'Bunog', 'Campong Ulay', 'Candawaga', 'Canipaan', 'Culasian',
+  'Iraan', 'Latud', 'Panalingaan', 'Punta Baja', 'Ransang', 'Taburi',
+]
+
+const ROLE_COLOR = { superadmin: 'red', admin: 'blue', beneficiary: 'green' } as const
+const ROLE_LABEL = { superadmin: 'Superadmin', admin: 'Admin', beneficiary: 'Beneficiary' } as const
 
 const ProfilePage = () => {
   const { user, updateUser } = useAuthStore()
   const toast = useToast()
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState({
-    name: user?.name || '',
+    first_name: user?.first_name || '',
+    last_name: user?.last_name || '',
     email: user?.email || '',
     barangay: user?.barangay || '',
-    phone: '',
-    address: '',
-    occupation: ''
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+    setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
   const handleSave = () => {
     updateUser({
-      name: formData.name,
-      email: formData.email,
-      barangay: formData.barangay
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      barangay: formData.barangay,
     })
-    
     toast({
       title: 'Profile updated',
       description: 'Your profile has been successfully updated.',
       status: 'success',
       duration: 3000,
+      isClosable: true,
     })
-    
     setIsEditing(false)
   }
 
   const handleCancel = () => {
     setFormData({
-      name: user?.name || '',
+      first_name: user?.first_name || '',
+      last_name: user?.last_name || '',
       email: user?.email || '',
       barangay: user?.barangay || '',
-      phone: '',
-      address: '',
-      occupation: ''
     })
     setIsEditing(false)
   }
 
+  const fullName = user?.first_name
+    ? `${user.first_name} ${user.last_name || ''}`.trim()
+    : user?.email || ''
+
+  const role = user?.role ?? 'beneficiary'
+
   return (
     <Box>
-      <VStack align="start" spacing={6} mb={8}>
-        <Box>
-          <Heading size="lg" mb={2}>
-            Profile Settings
-          </Heading>
-          <Text color="gray.600">
-            Manage your account information and preferences.
-          </Text>
-        </Box>
+      <VStack align="start" spacing={1} mb={8}>
+        <Heading size="lg">Profile Settings</Heading>
+        <Text color="gray.500">Manage your account information and preferences.</Text>
       </VStack>
 
       <Grid templateColumns={{ base: '1fr', lg: '1fr 2fr' }} gap={6}>
-        {/* Profile Summary */}
+        {/* Profile Summary Card */}
         <GridItem>
-          <Card>
+          <Card borderRadius="xl" boxShadow="sm">
             <CardBody>
               <VStack spacing={4}>
-                <Avatar size="xl" name={user?.name} />
-                <VStack spacing={1}>
-                  <Heading size="md">{user?.name}</Heading>
-                  <Text color="gray.600">{user?.email}</Text>
-                  <Text fontSize="sm" color="gray.500">
-                    {user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'User'}
-                  </Text>
+                <Avatar size="xl" name={fullName} bg="blue.500" color="white" />
+                <VStack spacing={1} textAlign="center">
+                  <Heading size="md">{fullName}</Heading>
+                  <Text color="gray.500" fontSize="sm">{user?.email}</Text>
+                  <Badge
+                    colorScheme={ROLE_COLOR[role as keyof typeof ROLE_COLOR]}
+                    borderRadius="full"
+                    px={3}
+                    py={1}
+                    fontSize="xs"
+                  >
+                    {ROLE_LABEL[role as keyof typeof ROLE_LABEL]}
+                  </Badge>
                 </VStack>
-                
+
                 <Divider />
-                
-                <VStack align="start" spacing={2} w="full">
+
+                <VStack align="start" spacing={3} w="full">
                   <HStack justify="space-between" w="full">
-                    <Text fontSize="sm" fontWeight="semibold">Barangay:</Text>
-                    <Text fontSize="sm">{user?.barangay || 'Not specified'}</Text>
+                    <Text fontSize="sm" color="gray.500">Barangay</Text>
+                    <Text fontSize="sm" fontWeight={600}>{user?.barangay || '—'}</Text>
                   </HStack>
                   <HStack justify="space-between" w="full">
-                    <Text fontSize="sm" fontWeight="semibold">Member since:</Text>
-                    <Text fontSize="sm">January 2024</Text>
-                  </HStack>
-                  <HStack justify="space-between" w="full">
-                    <Text fontSize="sm" fontWeight="semibold">Programs joined:</Text>
-                    <Text fontSize="sm">3</Text>
+                    <Text fontSize="sm" color="gray.500">Status</Text>
+                    <Badge colorScheme={user?.is_active ? 'green' : 'red'} fontSize="xs">
+                      {user?.is_active ? 'Active' : 'Inactive'}
+                    </Badge>
                   </HStack>
                 </VStack>
               </VStack>
@@ -118,23 +123,23 @@ const ProfilePage = () => {
           </Card>
         </GridItem>
 
-        {/* Profile Form */}
+        {/* Edit Form Card */}
         <GridItem>
-          <Card>
+          <Card borderRadius="xl" boxShadow="sm">
             <CardBody>
               <VStack align="start" spacing={6}>
                 <HStack justify="space-between" w="full">
                   <Heading size="md">Personal Information</Heading>
                   {!isEditing ? (
-                    <Button size="sm" onClick={() => setIsEditing(true)}>
+                    <Button size="sm" colorScheme="blue" variant="outline" borderRadius="lg" onClick={() => setIsEditing(true)}>
                       Edit Profile
                     </Button>
                   ) : (
                     <HStack>
-                      <Button size="sm" variant="outline" onClick={handleCancel}>
+                      <Button size="sm" variant="ghost" borderRadius="lg" onClick={handleCancel}>
                         Cancel
                       </Button>
-                      <Button size="sm" colorScheme="primary" onClick={handleSave}>
+                      <Button size="sm" colorScheme="blue" borderRadius="lg" onClick={handleSave}>
                         Save Changes
                       </Button>
                     </HStack>
@@ -143,80 +148,64 @@ const ProfilePage = () => {
 
                 <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={4} w="full">
                   <FormControl>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel fontSize="sm" color="gray.600">First Name</FormLabel>
                     <Input
-                      name="name"
-                      value={formData.name}
+                      name="first_name"
+                      value={formData.first_name}
                       onChange={handleChange}
                       isReadOnly={!isEditing}
                       bg={!isEditing ? 'gray.50' : 'white'}
+                      borderRadius="lg"
                     />
                   </FormControl>
 
                   <FormControl>
-                    <FormLabel>Email Address</FormLabel>
+                    <FormLabel fontSize="sm" color="gray.600">Last Name</FormLabel>
+                    <Input
+                      name="last_name"
+                      value={formData.last_name}
+                      onChange={handleChange}
+                      isReadOnly={!isEditing}
+                      bg={!isEditing ? 'gray.50' : 'white'}
+                      borderRadius="lg"
+                    />
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel fontSize="sm" color="gray.600">Email Address</FormLabel>
                     <Input
                       name="email"
                       type="email"
                       value={formData.email}
-                      onChange={handleChange}
-                      isReadOnly={!isEditing}
-                      bg={!isEditing ? 'gray.50' : 'white'}
+                      isReadOnly
+                      bg="gray.50"
+                      borderRadius="lg"
                     />
                   </FormControl>
 
                   <FormControl>
-                    <FormLabel>Barangay</FormLabel>
+                    <FormLabel fontSize="sm" color="gray.600">Barangay</FormLabel>
                     <Select
                       name="barangay"
                       value={formData.barangay}
                       onChange={handleChange}
                       isDisabled={!isEditing}
                       bg={!isEditing ? 'gray.50' : 'white'}
+                      borderRadius="lg"
                     >
                       <option value="">Select Barangay</option>
-                      <option value="Barangay 1">Barangay 1</option>
-                      <option value="Barangay 2">Barangay 2</option>
-                      <option value="Barangay 3">Barangay 3</option>
+                      {BARANGAYS.map((b) => (
+                        <option key={b} value={b}>{b}</option>
+                      ))}
                     </Select>
                   </FormControl>
-
-                  <FormControl>
-                    <FormLabel>Phone Number</FormLabel>
-                    <Input
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      isReadOnly={!isEditing}
-                      bg={!isEditing ? 'gray.50' : 'white'}
-                      placeholder="Enter phone number"
-                    />
-                  </FormControl>
-
-                  <FormControl>
-                    <FormLabel>Occupation</FormLabel>
-                    <Input
-                      name="occupation"
-                      value={formData.occupation}
-                      onChange={handleChange}
-                      isReadOnly={!isEditing}
-                      bg={!isEditing ? 'gray.50' : 'white'}
-                      placeholder="Enter occupation"
-                    />
-                  </FormControl>
-
-                  <FormControl>
-                    <FormLabel>Address</FormLabel>
-                    <Input
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      isReadOnly={!isEditing}
-                      bg={!isEditing ? 'gray.50' : 'white'}
-                      placeholder="Enter complete address"
-                    />
-                  </FormControl>
                 </Grid>
+
+                {isEditing && (
+                  <Text fontSize="xs" color="gray.400">
+                    Email address cannot be changed. Contact an administrator for email updates.
+                  </Text>
+                )}
               </VStack>
             </CardBody>
           </Card>

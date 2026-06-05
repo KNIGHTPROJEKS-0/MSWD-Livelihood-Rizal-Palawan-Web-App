@@ -16,16 +16,21 @@ interface AuthState {
   token: string | null
   isAuthenticated: boolean
   setAuth: (user: AuthUser, token: string) => void
+  updateUser: (updates: Partial<AuthUser>) => void
   logout: () => void
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       token: null,
       isAuthenticated: false,
       setAuth: (user, token) => set({ user, token, isAuthenticated: true }),
+      updateUser: (updates) => {
+        const current = get().user
+        if (current) set({ user: { ...current, ...updates } })
+      },
       logout: () => set({ user: null, token: null, isAuthenticated: false }),
     }),
     { name: 'mswd-auth' }

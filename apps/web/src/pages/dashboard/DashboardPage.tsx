@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react'
 import {
-  Box, Flex, VStack, HStack, Text, Heading, Avatar, Badge,
-  Button, Icon, Divider, useColorModeValue, IconButton,
+  Box, Flex, VStack, HStack, Text, Avatar, Badge,
+  Button, Icon, Divider, IconButton,
   Drawer, DrawerOverlay, DrawerContent, DrawerBody, useDisclosure
 } from '@chakra-ui/react'
 import { Routes, Route, useNavigate, Link as RouterLink, useLocation } from 'react-router-dom'
 import {
   MdDashboard, MdPeople, MdAssignment, MdSettings,
-  MdBarChart, MdLocationCity, MdMenu, MdLogout, MdWork
+  MdBarChart, MdLocationCity, MdMenu, MdLogout, MdWork, MdPerson
 } from 'react-icons/md'
 import { useAuthStore } from '../../store/authStore'
 import SuperadminDashboard from './SuperadminDashboard'
@@ -16,6 +15,7 @@ import BeneficiaryDashboard from './BeneficiaryDashboard'
 import ProgramsPage from './ProgramsPage'
 import ApplicationsPage from './ApplicationsPage'
 import UsersPage from './UsersPage'
+import ProfilePage from '../profile/ProfilePage'
 
 const ROLE_COLOR = { superadmin: 'red', admin: 'blue', beneficiary: 'green' } as const
 const ROLE_LABEL = { superadmin: 'Superadmin', admin: 'Admin', beneficiary: 'Beneficiary' } as const
@@ -46,6 +46,7 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
     { icon: MdPeople, label: 'Users', to: '/dashboard/users', roles: ['superadmin', 'admin'] },
     { icon: MdBarChart, label: 'Reports', to: '/dashboard/reports', roles: ['superadmin'] },
     { icon: MdLocationCity, label: 'Barangays', to: '/dashboard/barangays', roles: ['superadmin'] },
+    { icon: MdPerson, label: 'My Profile', to: '/dashboard/profile', roles: ['superadmin', 'admin', 'beneficiary'] },
     { icon: MdSettings, label: 'Settings', to: '/dashboard/settings', roles: ['superadmin'] },
   ].filter((item) => item.roles.includes(role))
 
@@ -138,6 +139,7 @@ export default function DashboardPage() {
             <Route path="programs" element={<ProgramsPage />} />
             <Route path="applications" element={<ApplicationsPage />} />
             <Route path="users" element={<UsersPage />} />
+            <Route path="profile" element={<ProfilePage />} />
             <Route path="*" element={<MainContent />} />
           </Routes>
         </Box>
