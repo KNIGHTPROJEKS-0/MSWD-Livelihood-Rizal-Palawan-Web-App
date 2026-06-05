@@ -1,4 +1,27 @@
-import { Box, Button, Container, Grid, GridItem, Heading, HStack, Image, Stack, Text, VStack, Flex, Link, IconButton, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerBody, Spacer, SimpleGrid, Tag } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Container,
+  Flex,
+  Grid,
+  Heading,
+  HStack,
+  Image,
+  Link,
+  SimpleGrid,
+  Spacer,
+  Stack,
+  Tag,
+  Text,
+  VStack,
+  IconButton,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerBody,
+  useDisclosure,
+  Badge,
+} from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 
 const NAV_LINKS = [
@@ -8,99 +31,176 @@ const NAV_LINKS = [
 ]
 
 const BARANGAYS = [
-  'Bunog',
-  'Campong Ulay',
-  'Candawaga',
-  'Canipaan',
-  'Culasian',
-  'Iraan',
-  'Latud',
-  'Panalingaan',
-  'Punta Baja',
-  'Ransang',
-  'Taburi',
+  'Bunog', 'Campong Ulay', 'Candawaga', 'Canipaan', 'Culasian',
+  'Iraan', 'Latud', 'Panalingaan', 'Punta Baja', 'Ransang', 'Taburi',
 ]
 
 const PROGRAMS = [
-  { title: 'Microenterprise Grants', desc: 'Seed capital assistance for livelihood startups and microenterprises.' },
-  { title: 'Skills Training & NC II', desc: 'TESDA-aligned short courses and work readiness training.' },
-  { title: 'Cash-for-Work', desc: 'Short-term work opportunities for disaster or community projects.' },
-  { title: 'Sustainable Agriculture', desc: 'Inputs and coaching for crops, fisheries, and agri-value chains.' },
-  { title: 'Women & Youth Enterprise', desc: 'Focused support for women- and youth-led livelihood projects.' },
-  { title: 'Cooperative Strengthening', desc: "Mentoring and tooling for people's organizations and co-ops." },
+  {
+    title: 'Microenterprise Grants',
+    desc: 'Seed capital assistance of up to ₱10,000 for starting or expanding a microenterprise.',
+    icon: '💼',
+    tag: 'Livelihood',
+  },
+  {
+    title: 'Skills Training & NC II',
+    desc: 'TESDA-aligned short courses: Bread & Pastry, Food & Beverage, Carpentry, and more.',
+    icon: '🎓',
+    tag: 'Training',
+  },
+  {
+    title: 'Cash-for-Work',
+    desc: 'Short-term employment in community maintenance, disaster response, and conservation.',
+    icon: '🏗️',
+    tag: 'Employment',
+  },
+  {
+    title: 'Sustainable Agriculture',
+    desc: 'Inputs and coaching for rice farming, vegetable gardening, and fisheries.',
+    icon: '🌾',
+    tag: 'Agriculture',
+  },
+  {
+    title: 'Women & Youth Enterprise',
+    desc: 'Focused support for women- and youth-led handicrafts, food processing, and service enterprises.',
+    icon: '🌟',
+    tag: 'Enterprise',
+  },
+  {
+    title: 'Cooperative Strengthening',
+    desc: "Mentoring, training, and startup capital for cooperatives and people's organizations.",
+    icon: '🤝',
+    tag: 'Community',
+  },
 ]
 
 const REQUIREMENTS = [
-  "Valid Government-issued ID (any of: PhilID, UMID, Driver's License, Passport, Voter's ID)",
-  'Barangay Certificate/Indigency (recent, with signature and seal)',
-  "Proof of Residency (e.g., latest barangay clearance or bill in applicant's name)",
-  'Income Certificate/Pay Slip or alternative proof of livelihood status',
-  "For Business/Group Applications: Mayor's Permit or DTI Registration, and basic proposal outline",
+  { icon: '🪪', text: "Valid Government-issued ID (PhilID, UMID, Driver's License, Passport, Voter's ID)" },
+  { icon: '📄', text: 'Barangay Certificate / Certificate of Indigency (recent, with signature and seal)' },
+  { icon: '🏠', text: "Proof of Residency (barangay clearance or recent utility bill in applicant's name)" },
+  { icon: '💰', text: 'Income Certificate / Pay Slip or alternative proof of livelihood status' },
+  { icon: '📋', text: "For Business/Group Applications: Mayor's Permit or DTI Registration + business proposal" },
+]
+
+const STATS = [
+  { value: '11', label: 'Barangays Served' },
+  { value: '6+', label: 'Active Programs' },
+  { value: '₱500K+', label: 'Annual Budget' },
+  { value: '100+', label: 'Beneficiaries' },
 ]
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
-    <Box>
-      {/* Navbar */}
-      <Box as="header" position="sticky" top={0} zIndex="sticky" bg="white" boxShadow="sm" borderBottomWidth={1}>
+    <Box minH="100vh" bg="white">
+
+      {/* ── Navbar ── */}
+      <Box
+        as="header"
+        position="sticky"
+        top={0}
+        zIndex="sticky"
+        bg="rgba(255,255,255,0.85)"
+        backdropFilter="blur(12px)"
+        borderBottomWidth={1}
+        borderColor="gray.100"
+        boxShadow="0 1px 20px rgba(0,0,0,0.06)"
+      >
         <Container maxW="7xl">
           <Flex h={16} align="center">
             <HStack spacing={3}>
-              <Image src="/MSWD-Livelihood-Roxas-LOGO.png" alt="MSWD Livelihood Logo" boxSize="36px" objectFit="contain" />
-              <Text fontWeight={700}>MSWD Livelihood</Text>
+              <Image
+                src="/MSWD-Livelihood-Roxas-LOGO.png"
+                alt="MSWD Logo"
+                boxSize="40px"
+                objectFit="contain"
+                borderRadius="md"
+              />
+              <VStack spacing={0} align="start">
+                <Text fontWeight={800} fontSize="sm" lineHeight={1.1} color="blue.700">
+                  MSWD Livelihood
+                </Text>
+                <Text fontSize="10px" color="gray.500" lineHeight={1}>
+                  Dr. Jose P. Rizal, Palawan
+                </Text>
+              </VStack>
             </HStack>
             <Spacer />
-            <HStack spacing={6} display={{ base: 'none', md: 'flex' }}>
+
+            <HStack spacing={8} display={{ base: 'none', md: 'flex' }}>
               {NAV_LINKS.map((l) => (
-                <Link key={l.label} href={l.href} fontWeight={600} _hover={{ color: 'primary.600' }}>
+                <Link
+                  key={l.label}
+                  href={l.href}
+                  fontSize="sm"
+                  fontWeight={600}
+                  color="gray.600"
+                  _hover={{ color: 'blue.600', textDecoration: 'none' }}
+                  transition="color 0.2s"
+                >
                   {l.label}
                 </Link>
               ))}
-              <HStack>
-                <Button as={RouterLink} to="/login" variant="ghost">Login</Button>
-                <Button as={RouterLink} to="/register" colorScheme="primary">Register</Button>
+              <HStack spacing={2}>
+                <Button
+                  as={RouterLink}
+                  to="/login"
+                  variant="ghost"
+                  size="sm"
+                  fontWeight={600}
+                  color="gray.700"
+                >
+                  Sign In
+                </Button>
+                <Button
+                  as={RouterLink}
+                  to="/register"
+                  size="sm"
+                  fontWeight={700}
+                  bgGradient="linear(to-r, blue.500, blue.700)"
+                  color="white"
+                  _hover={{ bgGradient: 'linear(to-r, blue.600, blue.800)', transform: 'translateY(-1px)', boxShadow: 'md' }}
+                  transition="all 0.2s"
+                  borderRadius="full"
+                  px={5}
+                >
+                  Get Started
+                </Button>
               </HStack>
             </HStack>
+
             <IconButton
               aria-label="Open menu"
-              icon={
-                isOpen ? (
-                  <Box as="svg" width="12px" height="12px" viewBox="0 0 12 12" fill="currentColor">
-                    <path d="M.436 10.564L10.564.436.436 10.564zM10.564 10.564L.436.436l10.128 10.128z" />
-                  </Box>
-                ) : (
-                  <Box as="svg" width="14px" height="14px" viewBox="0 0 14 14" fill="currentColor">
-                    <path d="M14 1.75H0V.25h14zM14 7.75H0V6.25h14zM14 13.75H0v-1.5h14z" />
-                  </Box>
-                )
-              }
               display={{ base: 'inline-flex', md: 'none' }}
               onClick={isOpen ? onClose : onOpen}
               variant="ghost"
               ml={2}
+              icon={
+                <Box as="svg" width="18px" height="18px" viewBox="0 0 18 18" fill="currentColor">
+                  {isOpen
+                    ? <path d="M2 2l14 14M16 2L2 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" />
+                    : <path d="M2 4h14M2 9h14M2 14h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" />
+                  }
+                </Box>
+              }
             />
           </Flex>
         </Container>
-        {/* Mobile drawer */}
+
         <Drawer isOpen={isOpen} placement="top" onClose={onClose}>
-          <DrawerOverlay />
+          <DrawerOverlay backdropFilter="blur(4px)" />
           <DrawerContent>
             <DrawerBody pb={6}>
-              <VStack align="stretch" spacing={3} py={4}>
+              <VStack align="stretch" spacing={2} py={4}>
                 {NAV_LINKS.map((l) => (
-                  <Link key={l.label} href={l.href} onClick={onClose} fontWeight={600}>
+                  <Link key={l.label} href={l.href} onClick={onClose} fontWeight={600} py={2}>
                     {l.label}
                   </Link>
                 ))}
-                <HStack pt={2}>
-                  <Button as={RouterLink} to="/login" onClick={onClose} variant="ghost" w="full">
-                    Login
-                  </Button>
-                  <Button as={RouterLink} to="/register" onClick={onClose} colorScheme="primary" w="full">
-                    Register
-                  </Button>
+                <HStack pt={3}>
+                  <Button as={RouterLink} to="/login" onClick={onClose} variant="outline" w="full" size="sm">Sign In</Button>
+                  <Button as={RouterLink} to="/register" onClick={onClose} colorScheme="blue" w="full" size="sm">Get Started</Button>
                 </HStack>
               </VStack>
             </DrawerBody>
@@ -108,151 +208,422 @@ const LandingPage = () => {
         </Drawer>
       </Box>
 
-      {/* Hero Section */}
-      <Box bgGradient="linear(to-b, primary.50, white)" py={{ base: 12, md: 20 }}>
-        <Container maxW="7xl">
-          <Grid templateColumns={{ base: '1fr', md: '1.2fr 1fr' }} gap={8} alignItems="center">
-            <GridItem>
-              <VStack align="center" textAlign="center" spacing={5}>
-                <Image src="/MSWD-Livelihood-Roxas-LOGO.png" alt="MSWD Livelihood Logo" />
-                <Heading size="2xl" lineHeight={1.1}>MSWD Livelihood Platform</Heading>
-                <Text fontSize={{ base: 'md', md: 'lg' }} color="gray.600">
-                  Empowering families and communities of Dr. Jose P. Rizal, Palawan through
-                  accessible livelihood programs, training, and assistance services.
+      {/* ── Hero ── */}
+      <Box
+        position="relative"
+        overflow="hidden"
+        pt={{ base: 16, md: 24 }}
+        pb={{ base: 12, md: 20 }}
+        bgGradient="linear(to-br, #0f172a, #1e3a6e, #1a56a0)"
+      >
+        {/* Decorative background blobs */}
+        <Box
+          position="absolute" top="-120px" right="-120px"
+          w="500px" h="500px" borderRadius="full"
+          bg="blue.400" opacity={0.12} filter="blur(80px)"
+          pointerEvents="none"
+        />
+        <Box
+          position="absolute" bottom="-80px" left="-80px"
+          w="400px" h="400px" borderRadius="full"
+          bg="cyan.400" opacity={0.1} filter="blur(60px)"
+          pointerEvents="none"
+        />
+
+        <Container maxW="7xl" position="relative">
+          <Grid
+            templateColumns={{ base: '1fr', lg: '1fr 1fr' }}
+            gap={{ base: 10, lg: 16 }}
+            alignItems="center"
+          >
+            {/* Left — text */}
+            <VStack align={{ base: 'center', lg: 'start' }} spacing={6} textAlign={{ base: 'center', lg: 'left' }}>
+              <Badge
+                colorScheme="blue"
+                variant="subtle"
+                px={3} py={1}
+                borderRadius="full"
+                fontSize="xs"
+                fontWeight={600}
+                textTransform="uppercase"
+                letterSpacing="wider"
+                bg="rgba(59,130,246,0.2)"
+                color="blue.200"
+                border="1px solid"
+                borderColor="blue.500"
+              >
+                Municipality of Dr. Jose P. Rizal · Palawan
+              </Badge>
+
+              <Heading
+                as="h1"
+                fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}
+                fontWeight={800}
+                lineHeight={1.1}
+                color="white"
+              >
+                Empowering Families<br />
+                <Box as="span" bgGradient="linear(to-r, blue.300, cyan.300)" bgClip="text">
+                  Through Livelihood
+                </Box>
+              </Heading>
+
+              <Text
+                fontSize={{ base: 'md', md: 'lg' }}
+                color="blue.100"
+                maxW="480px"
+                lineHeight={1.7}
+              >
+                The Municipal Social Welfare and Development Office connects residents of Rizal, Palawan to
+                livelihood programs, skills training, and financial assistance.
+              </Text>
+
+              <HStack spacing={3} flexWrap="wrap" justify={{ base: 'center', lg: 'start' }}>
+                <Button
+                  as={RouterLink}
+                  to="/register"
+                  size="lg"
+                  fontWeight={700}
+                  bgGradient="linear(to-r, blue.400, cyan.500)"
+                  color="white"
+                  _hover={{ bgGradient: 'linear(to-r, blue.500, cyan.600)', transform: 'translateY(-2px)', boxShadow: 'xl' }}
+                  transition="all 0.2s"
+                  borderRadius="xl"
+                  px={8}
+                >
+                  Apply Now
+                </Button>
+                <Button
+                  as={RouterLink}
+                  to="/login"
+                  size="lg"
+                  fontWeight={600}
+                  variant="outline"
+                  color="white"
+                  borderColor="rgba(255,255,255,0.3)"
+                  _hover={{ bg: 'rgba(255,255,255,0.1)', borderColor: 'white' }}
+                  transition="all 0.2s"
+                  borderRadius="xl"
+                  px={8}
+                >
+                  Staff Login
+                </Button>
+              </HStack>
+            </VStack>
+
+            {/* Right — logo card */}
+            <Flex justify="center" align="center">
+              <Box
+                bg="rgba(255,255,255,0.07)"
+                border="1px solid rgba(255,255,255,0.15)"
+                borderRadius="3xl"
+                backdropFilter="blur(20px)"
+                p={{ base: 10, md: 12 }}
+                textAlign="center"
+                boxShadow="0 25px 60px rgba(0,0,0,0.3)"
+                _hover={{ transform: 'translateY(-4px)', boxShadow: '0 35px 80px rgba(0,0,0,0.4)' }}
+                transition="all 0.3s"
+                maxW="320px"
+                w="full"
+              >
+                <Image
+                  src="/MSWD-Livelihood-Roxas-LOGO.png"
+                  alt="MSWD Livelihood Logo"
+                  boxSize={{ base: '140px', md: '180px' }}
+                  objectFit="contain"
+                  mx="auto"
+                  mb={4}
+                  filter="drop-shadow(0 8px 16px rgba(0,0,0,0.3))"
+                />
+                <Text fontWeight={700} color="white" fontSize="lg">MSWD Livelihood</Text>
+                <Text color="blue.200" fontSize="sm" mt={1}>Dr. Jose P. Rizal, Palawan</Text>
+                <Text color="blue.300" fontSize="xs" mt={1}>Est. 1989</Text>
+              </Box>
+            </Flex>
+          </Grid>
+
+          {/* Stats row */}
+          <SimpleGrid
+            columns={{ base: 2, md: 4 }}
+            spacing={4}
+            mt={{ base: 12, md: 16 }}
+          >
+            {STATS.map((s) => (
+              <Box
+                key={s.label}
+                bg="rgba(255,255,255,0.07)"
+                border="1px solid rgba(255,255,255,0.12)"
+                borderRadius="xl"
+                p={5}
+                textAlign="center"
+                backdropFilter="blur(10px)"
+              >
+                <Text fontSize={{ base: '2xl', md: '3xl' }} fontWeight={800} color="white" lineHeight={1}>
+                  {s.value}
                 </Text>
-                <HStack spacing={4} justify="center">
-                  <Button as={RouterLink} to="/register" colorScheme="primary" size="lg">Get Started</Button>
-                  <Button as={RouterLink} to="/login" variant="outline" size="lg">Sign In</Button>
+                <Text fontSize="sm" color="blue.200" mt={1}>{s.label}</Text>
+              </Box>
+            ))}
+          </SimpleGrid>
+        </Container>
+      </Box>
+
+      {/* ── Barangays ── */}
+      <Box id="barangays" py={{ base: 14, md: 20 }} bg="gray.50">
+        <Container maxW="7xl">
+          <VStack align="start" spacing={2} mb={10}>
+            <Tag size="sm" colorScheme="blue" variant="subtle" borderRadius="full" px={3}>Coverage Area</Tag>
+            <Heading size="xl" fontWeight={800}>Barangays We Serve</Heading>
+            <Text color="gray.500" maxW="lg">
+              MSWD livelihood programs are available to all residents across 11 barangays of Dr. Jose P. Rizal, Palawan.
+            </Text>
+          </VStack>
+
+          <SimpleGrid columns={{ base: 2, sm: 3, md: 4, lg: 6 }} spacing={3}>
+            {BARANGAYS.map((name, i) => (
+              <Box
+                key={name}
+                bg="white"
+                border="1px solid"
+                borderColor="gray.200"
+                borderRadius="xl"
+                p={4}
+                textAlign="center"
+                _hover={{ borderColor: 'blue.400', boxShadow: 'md', transform: 'translateY(-2px)' }}
+                transition="all 0.2s"
+                cursor="default"
+              >
+                <Box
+                  w={8} h={8} borderRadius="full" mx="auto" mb={2}
+                  bgGradient={`linear(to-br, blue.${400 + (i % 3) * 100}, cyan.${400 + (i % 2) * 100})`}
+                  display="flex" alignItems="center" justifyContent="center"
+                >
+                  <Text fontSize="xs" fontWeight={800} color="white">{i + 1}</Text>
+                </Box>
+                <Text fontWeight={600} fontSize="sm" color="gray.700">{name}</Text>
+              </Box>
+            ))}
+          </SimpleGrid>
+        </Container>
+      </Box>
+
+      {/* ── Programs ── */}
+      <Box id="programs" py={{ base: 14, md: 20 }} bg="white">
+        <Container maxW="7xl">
+          <VStack align="start" spacing={2} mb={10}>
+            <Tag size="sm" colorScheme="blue" variant="subtle" borderRadius="full" px={3}>What We Offer</Tag>
+            <Heading size="xl" fontWeight={800}>Livelihood Programs</Heading>
+            <Text color="gray.500" maxW="lg">
+              From seed capital to skills certification — programs designed for households, groups, and cooperatives.
+            </Text>
+          </VStack>
+
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={5}>
+            {PROGRAMS.map((p) => (
+              <Box
+                key={p.title}
+                bg="white"
+                border="1px solid"
+                borderColor="gray.100"
+                borderRadius="2xl"
+                p={6}
+                boxShadow="sm"
+                _hover={{ boxShadow: 'lg', borderColor: 'blue.200', transform: 'translateY(-3px)' }}
+                transition="all 0.25s"
+                position="relative"
+                overflow="hidden"
+              >
+                <Box
+                  position="absolute" top={0} left={0} right={0} h="3px"
+                  bgGradient="linear(to-r, blue.400, cyan.400)"
+                />
+                <Text fontSize="2xl" mb={3}>{p.icon}</Text>
+                <HStack mb={2} align="center" justify="space-between">
+                  <Heading size="sm" fontWeight={700}>{p.title}</Heading>
+                  <Tag size="xs" colorScheme="blue" variant="subtle" borderRadius="full" px={2} fontSize="10px">
+                    {p.tag}
+                  </Tag>
                 </HStack>
-              </VStack>
-            </GridItem>
-            <GridItem>
-              {/* Decorative panel to replace external image and avoid ORB errors */}
-              <Box aria-hidden bgGradient="linear(to-br, primary.100, primary.200)" borderRadius="lg" boxShadow="lg" minH={{ base: '180px', md: '260px' }} />
-            </GridItem>
+                <Text color="gray.600" fontSize="sm" lineHeight={1.6}>{p.desc}</Text>
+              </Box>
+            ))}
+          </SimpleGrid>
+
+          <HStack mt={10} spacing={3}>
+            <Button
+              as={RouterLink}
+              to="/register"
+              colorScheme="blue"
+              size="md"
+              fontWeight={700}
+              borderRadius="xl"
+              px={7}
+              bgGradient="linear(to-r, blue.500, blue.700)"
+              _hover={{ bgGradient: 'linear(to-r, blue.600, blue.800)' }}
+            >
+              Apply for a Program
+            </Button>
+            <Button
+              as={RouterLink}
+              to="/login"
+              variant="outline"
+              colorScheme="blue"
+              size="md"
+              fontWeight={600}
+              borderRadius="xl"
+              px={7}
+            >
+              Staff Portal
+            </Button>
+          </HStack>
+        </Container>
+      </Box>
+
+      {/* ── Requirements ── */}
+      <Box id="requirements" py={{ base: 14, md: 20 }} bgGradient="linear(to-br, gray.50, blue.50)">
+        <Container maxW="7xl">
+          <Grid templateColumns={{ base: '1fr', lg: '1fr 1.5fr' }} gap={{ base: 8, lg: 16 }} alignItems="start">
+            <VStack align="start" spacing={4}>
+              <Tag size="sm" colorScheme="blue" variant="subtle" borderRadius="full" px={3}>Before You Apply</Tag>
+              <Heading size="xl" fontWeight={800}>General Requirements</Heading>
+              <Text color="gray.600" lineHeight={1.7}>
+                Bring original copies and photocopies for verification. Some programs may require
+                additional documents specific to the assistance type.
+              </Text>
+              <Button
+                as={RouterLink}
+                to="/register"
+                colorScheme="blue"
+                fontWeight={700}
+                borderRadius="xl"
+                px={7}
+                mt={2}
+              >
+                Start Application
+              </Button>
+            </VStack>
+
+            <VStack spacing={3} align="stretch">
+              {REQUIREMENTS.map((req) => (
+                <HStack
+                  key={req.text}
+                  bg="white"
+                  border="1px solid"
+                  borderColor="gray.100"
+                  borderRadius="xl"
+                  p={4}
+                  spacing={4}
+                  boxShadow="sm"
+                  _hover={{ borderColor: 'blue.200', boxShadow: 'md' }}
+                  transition="all 0.2s"
+                >
+                  <Text fontSize="xl" flexShrink={0}>{req.icon}</Text>
+                  <Text fontSize="sm" color="gray.700" lineHeight={1.5}>{req.text}</Text>
+                </HStack>
+              ))}
+            </VStack>
           </Grid>
         </Container>
       </Box>
 
-      {/* Design Reference Section - Figma Embed */}
-      <Box py={{ base: 8, md: 12 }} bg="gray.50">
-        <Container maxW="7xl">
-          <VStack spacing={6}>
-            <Heading size="lg" textAlign="center">Design Inspiration</Heading>
-            <Text color="gray.600" textAlign="center" maxW="2xl">
-              Explore modern landing page designs and interface patterns that inspire our platform development.
-            </Text>
-            <Box
-              w="full"
-              maxW="900px"
-              mx="auto"
-              borderRadius="lg"
-              overflow="hidden"
-              boxShadow="lg"
-              border="1px solid"
-              borderColor="gray.200"
-            >
-              <Box
-                as="iframe"
-                w="full"
-                h="450px"
-                src="https://embed.figma.com/proto/aLSnkD5gLtR3CW30HLiuwj/Landing-Page-Kit---Free-13-Landing-Pages-Collection-for-UI-UX-Design--Community-?node-id=299-17625&p=f&scaling=min-zoom&content-scaling=fixed&page-id=2%3A6&starting-point-node-id=299%3A17625&embed-host=share"
-                allowFullScreen
-                title="Landing Page Design Kit - Figma Prototype"
-              />
-            </Box>
-          </VStack>
-        </Container>
-      </Box>
-
-      {/* Barangays Section */}
-      <Box id="barangays" py={{ base: 12, md: 16 }}>
-        <Container maxW="7xl">
-          <VStack align="start" spacing={6}>
-            <Heading size="xl">Barangays</Heading>
-            <Text color="gray.600">Explore all barangays covered by MSWD Dr. Jose P. Rizal, Palawan.</Text>
-            <SimpleGrid columns={{ base: 2, sm: 3, md: 4, lg: 5 }} spacing={4} w="full">
-              {BARANGAYS.map((name) => (
-                <Box key={name} p={4} borderWidth={1} borderRadius="lg" _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }} transition="all 0.2s" role="group">
-                  <VStack spacing={2} align="start">
-                    <Tag size="sm" colorScheme="primary" variant="subtle">Barangay</Tag>
-                    <Text fontWeight={600} _groupHover={{ color: 'primary.700' }}>{name}</Text>
-                  </VStack>
-                </Box>
-              ))}
-            </SimpleGrid>
-          </VStack>
-        </Container>
-      </Box>
-
-      {/* Programs Section */}
-      <Box id="programs" bg="primary.50" py={{ base: 12, md: 16 }}>
-        <Container maxW="7xl">
-          <VStack align="start" spacing={6}>
-            <Heading size="xl">Livelihood Programs</Heading>
-            <Text color="gray.700">Featured programs and services that support households and people's organizations.</Text>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} w="full">
-              {PROGRAMS.map((p) => (
-                <Box key={p.title} p={6} borderWidth={1} borderRadius="lg" bg="white" boxShadow="sm" _hover={{ boxShadow: 'md' }}>
-                  <Heading size="md" mb={2}>{p.title}</Heading>
-                  <Text color="gray.600">{p.desc}</Text>
-                </Box>
-              ))}
-            </SimpleGrid>
-            <HStack>
-              <Button as={RouterLink} to="/register" colorScheme="primary">Apply Now</Button>
-              <Button as={RouterLink} to="/login" variant="outline">Manage as Staff</Button>
-            </HStack>
-          </VStack>
-        </Container>
-      </Box>
-
-      {/* Requirements Section */}
-      <Box id="requirements" py={{ base: 12, md: 16 }}>
-        <Container maxW="7xl">
-          <VStack align="start" spacing={6}>
-            <Heading size="xl">General Requirements</Heading>
-            <Text color="gray.600">Bring original copies for verification. Programs may have additional specific requirements.</Text>
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} w="full">
-              {REQUIREMENTS.map((req) => (
-                <Box key={req} p={4} borderWidth={1} borderRadius="md">
-                  <Text>{req}</Text>
-                </Box>
-              ))}
-            </SimpleGrid>
-          </VStack>
-        </Container>
-      </Box>
-
-      {/* CTA Section */}
-      <Box py={{ base: 10, md: 16 }} bgGradient="linear(to-b, white, primary.50)">
-        <Container maxW="7xl">
-          <Stack direction={{ base: 'column', md: 'row' }} justify="space-between" align="center" spacing={6}>
-            <Heading size="lg">Ready to participate or manage programs?</Heading>
-            <HStack>
-              <Button as={RouterLink} to="/register" colorScheme="primary">Create Account</Button>
-              <Button as={RouterLink} to="/login" variant="outline">Sign In</Button>
+      {/* ── CTA Banner ── */}
+      <Box
+        py={{ base: 14, md: 20 }}
+        bgGradient="linear(to-r, #0f172a, #1e3a6e)"
+        position="relative"
+        overflow="hidden"
+      >
+        <Box
+          position="absolute" top="-60px" right="-60px"
+          w="300px" h="300px" borderRadius="full"
+          bg="blue.500" opacity={0.15} filter="blur(60px)"
+          pointerEvents="none"
+        />
+        <Container maxW="7xl" position="relative">
+          <Stack
+            direction={{ base: 'column', md: 'row' }}
+            justify="space-between"
+            align="center"
+            spacing={8}
+          >
+            <VStack align={{ base: 'center', md: 'start' }} spacing={2}>
+              <Heading size="lg" color="white" fontWeight={800}>
+                Ready to apply or manage programs?
+              </Heading>
+              <Text color="blue.200" fontSize="md">
+                Join hundreds of beneficiaries or sign in as MSWD staff.
+              </Text>
+            </VStack>
+            <HStack spacing={3} flexShrink={0}>
+              <Button
+                as={RouterLink}
+                to="/register"
+                size="lg"
+                fontWeight={700}
+                bgGradient="linear(to-r, blue.400, cyan.500)"
+                color="white"
+                _hover={{ bgGradient: 'linear(to-r, blue.500, cyan.600)', transform: 'translateY(-2px)' }}
+                transition="all 0.2s"
+                borderRadius="xl"
+                px={8}
+              >
+                Create Account
+              </Button>
+              <Button
+                as={RouterLink}
+                to="/login"
+                size="lg"
+                fontWeight={600}
+                variant="outline"
+                color="white"
+                borderColor="rgba(255,255,255,0.3)"
+                _hover={{ bg: 'rgba(255,255,255,0.1)' }}
+                borderRadius="xl"
+                px={8}
+              >
+                Sign In
+              </Button>
             </HStack>
           </Stack>
         </Container>
       </Box>
 
-      {/* Footer */}
-      <Box as="footer" borderTopWidth={1} py={8} bg="white">
+      {/* ── Footer ── */}
+      <Box as="footer" bg="#0f172a" py={10}>
         <Container maxW="7xl">
-          <Flex direction={{ base: 'column', md: 'row' }} align={{ base: 'start', md: 'center' }} gap={3}>
-            <Text>&copy; {new Date().getFullYear()} MSWD Dr. Jose P. Rizal, Palawan</Text>
+          <Flex direction={{ base: 'column', md: 'row' }} align={{ base: 'center', md: 'center' }} gap={6}>
+            <HStack spacing={3}>
+              <Image
+                src="/MSWD-Livelihood-Roxas-LOGO.png"
+                alt="MSWD Logo"
+                boxSize="32px"
+                objectFit="contain"
+                opacity={0.9}
+              />
+              <VStack spacing={0} align="start">
+                <Text color="white" fontWeight={700} fontSize="sm">MSWD Livelihood</Text>
+                <Text color="gray.500" fontSize="xs">Dr. Jose P. Rizal, Palawan</Text>
+              </VStack>
+            </HStack>
             <Spacer />
-            <HStack spacing={6}>
+            <HStack spacing={6} flexWrap="wrap" justify="center">
               {NAV_LINKS.map((l) => (
-                <Link key={l.label} href={l.href}>{l.label}</Link>
+                <Link key={l.label} href={l.href} color="gray.400" fontSize="sm" _hover={{ color: 'white' }} transition="color 0.2s">
+                  {l.label}
+                </Link>
               ))}
-              <Link as={RouterLink} to="/login">Login</Link>
-              <Link as={RouterLink} to="/register">Register</Link>
+              <Link as={RouterLink} to="/login" color="gray.400" fontSize="sm" _hover={{ color: 'white' }} transition="color 0.2s">Login</Link>
+              <Link as={RouterLink} to="/register" color="gray.400" fontSize="sm" _hover={{ color: 'white' }} transition="color 0.2s">Register</Link>
             </HStack>
           </Flex>
+          <Box borderTopWidth={1} borderColor="gray.800" mt={8} pt={6} textAlign="center">
+            <Text color="gray.600" fontSize="xs">
+              &copy; {new Date().getFullYear()} Municipal Social Welfare and Development Office · Dr. Jose P. Rizal, Palawan · All rights reserved.
+            </Text>
+          </Box>
         </Container>
       </Box>
+
     </Box>
   )
 }
