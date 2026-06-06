@@ -16,6 +16,60 @@ class UserUpdate(BaseModel):
     barangay: Optional[str] = None
 
 
+class UserCreate(BaseModel):
+    email: str
+    password: str
+    first_name: str
+    last_name: str
+    phone: Optional[str] = None
+    barangay: Optional[str] = None
+    role: Optional[str] = "beneficiary"
+
+
+@router.post("/create")
+def create_user(data: UserCreate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    if current_user.role not in ("superadmin", "admin"):
+        raise HTTPException(status_code=403, detail="Not authorized")
+    # Admin can only create beneficiaries
+    if current_user.role == "admin" and data.role != "beneficiary":
+        raise HTTPException(status_code=403, detail="Admins can only create Beneficiary accounts")
+    # Superadmin cannot create another superadmin via this endpoint (use role change instead)
+    if data.role not in ("beneficiary", "admin", "superadmin"):
+        raise HTTPException(status_code=400, detail="Invalid role")
+    from app.models.user import User
+    from passlib.context import CryptContext
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+    existing = db.query(User).filter(User.email == data.email).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="An account with this email already exists")
+
+    user = User(
+        email=data.email,
+        hashed_password=pwd_context.hash(data.password),
+        first_name=data.first_name,
+        last_name=data.last_name,
+        phone=data.phone,
+        barangay=data.barangay,
+        role=data.role,
+        is_active=True,
+        is_verified=True,
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return {
+        "id": user.id,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "role": user.role,
+        "barangay": user.barangay,
+        "is_active": user.is_active,
+        "created_at": str(user.created_at) if user.created_at else None,
+    }
+
+
 @router.get("/")
 def list_users(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     if current_user.role not in ("superadmin", "admin"):

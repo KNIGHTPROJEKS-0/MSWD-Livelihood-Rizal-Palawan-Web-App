@@ -63,6 +63,15 @@ export const adminApi = {
 export const usersApi = {
   list: () => apiClient.get('/users/'),
   pending: () => apiClient.get('/users/pending'),
+  create: (data: {
+    email: string
+    password: string
+    first_name: string
+    last_name: string
+    phone?: string
+    barangay?: string
+    role?: string
+  }) => apiClient.post('/users/create', data),
   approve: (id: number) => apiClient.patch(`/users/${id}/approve`),
   reject: (id: number) => apiClient.patch(`/users/${id}/reject`),
   update: (id: number, data: object) => apiClient.put(`/users/${id}`, data),
