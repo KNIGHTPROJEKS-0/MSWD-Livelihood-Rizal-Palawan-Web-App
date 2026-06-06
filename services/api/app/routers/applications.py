@@ -22,11 +22,17 @@ class ApplicationReview(BaseModel):
     notes: Optional[str] = None
 
 
-def app_to_dict(a):
+def app_to_dict(a, user=None, program=None):
     return {
         "id": a.id,
         "user_id": a.user_id,
+        "applicant_name": (
+            f"{user.first_name or ''} {user.last_name or ''}".strip() or user.email
+        ) if user else None,
+        "applicant_email": user.email if user else None,
+        "applicant_barangay": user.barangay if user else None,
         "program_id": a.program_id,
+        "program_title": program.title if program else None,
         "status": a.status,
         "notes": a.notes,
         "business_name": a.business_name,
@@ -34,17 +40,35 @@ def app_to_dict(a):
         "requested_amount": float(a.requested_amount) if a.requested_amount else None,
         "applied_at": str(a.applied_at) if a.applied_at else None,
         "reviewed_at": str(a.reviewed_at) if a.reviewed_at else None,
+        "reviewed_by": a.reviewed_by,
     }
 
 
 @router.get("/")
 def list_applications(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     from app.models.application import Application
+    from app.models.user import User
+    from app.models.program import Program
+
     if current_user.role in ("superadmin", "admin"):
-        apps = db.query(Application).all()
+        rows = (
+            db.query(Application, User, Program)
+            .join(User, Application.user_id == User.id)
+            .join(Program, Application.program_id == Program.id)
+            .order_by(Application.applied_at.desc())
+            .all()
+        )
+        return [app_to_dict(a, u, p) for a, u, p in rows]
     else:
-        apps = db.query(Application).filter(Application.user_id == current_user.id).all()
-    return [app_to_dict(a) for a in apps]
+        rows = (
+            db.query(Application, User, Program)
+            .join(User, Application.user_id == User.id)
+            .join(Program, Application.program_id == Program.id)
+            .filter(Application.user_id == current_user.id)
+            .order_by(Application.applied_at.desc())
+            .all()
+        )
+        return [app_to_dict(a, u, p) for a, u, p in rows]
 
 
 @router.post("/")
@@ -73,7 +97,7 @@ def create_application(data: ApplicationCreate, db: Session = Depends(get_db), c
     db.add(app)
     db.commit()
     db.refresh(app)
-    return app_to_dict(app)
+    return app_to_dict(app, current_user, program)
 
 
 @router.patch("/{app_id}/review")
@@ -83,6 +107,8 @@ def review_application(app_id: int, data: ApplicationReview, db: Session = Depen
     if data.status not in ("approved", "rejected"):
         raise HTTPException(status_code=400, detail="Status must be 'approved' or 'rejected'")
     from app.models.application import Application
+    from app.models.user import User
+    from app.models.program import Program
     from datetime import datetime
     app = db.query(Application).filter(Application.id == app_id).first()
     if not app:
@@ -94,7 +120,9 @@ def review_application(app_id: int, data: ApplicationReview, db: Session = Depen
         app.notes = data.notes
     db.commit()
     db.refresh(app)
-    return app_to_dict(app)
+    user = db.query(User).filter(User.id == app.user_id).first()
+    program = db.query(Program).filter(Program.id == app.program_id).first()
+    return app_to_dict(app, user, program)
 
 
 @router.delete("/{app_id}")
