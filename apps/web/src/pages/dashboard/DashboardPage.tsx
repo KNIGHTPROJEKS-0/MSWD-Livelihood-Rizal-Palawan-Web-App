@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import {
   Box, Flex, VStack, HStack, Text, Avatar, Badge,
   Button, Icon, Divider, IconButton,
@@ -5,10 +6,12 @@ import {
 } from '@chakra-ui/react'
 import { Routes, Route, useNavigate, Link as RouterLink, useLocation } from 'react-router-dom'
 import {
-  MdDashboard, MdPeople, MdAssignment, MdSettings,
-  MdBarChart, MdLocationCity, MdMenu, MdLogout, MdWork, MdPerson
+  MdDashboard, MdPeople, MdAssignment, MdBarChart, MdLocationCity,
+  MdMenu, MdLogout, MdWork, MdPerson, MdDescription, MdTrendingUp,
+  MdChat, MdFactCheck
 } from 'react-icons/md'
 import { useAuthStore } from '../../store/authStore'
+import { messagesApi } from '../../services/api'
 import SuperadminDashboard from './SuperadminDashboard'
 import AdminDashboard from './AdminDashboard'
 import BeneficiaryDashboard from './BeneficiaryDashboard'
@@ -16,12 +19,20 @@ import ProgramsPage from './ProgramsPage'
 import ApplicationsPage from './ApplicationsPage'
 import UsersPage from './UsersPage'
 import ReportsPage from './ReportsPage'
+import FormsPage from './FormsPage'
+import LivelihoodUpdatesPage from './LivelihoodUpdatesPage'
+import MessagesPage from './MessagesPage'
 import ProfilePage from '../profile/ProfilePage'
+import MSWDForm3Page from '../forms/MSWDForm3Page'
+import IntakeAssessmentPage from '../forms/IntakeAssessmentPage'
+import SocialCaseStudyPage from '../forms/SocialCaseStudyPage'
+import DocumentUploadPage from '../forms/DocumentUploadPage'
+import FormDetailPage from '../forms/FormDetailPage'
 
 const ROLE_COLOR = { superadmin: 'red', admin: 'blue', beneficiary: 'green' } as const
 const ROLE_LABEL = { superadmin: 'Superadmin', admin: 'Admin', beneficiary: 'Beneficiary' } as const
 
-function NavItem({ icon, label, to, active }: { icon: any; label: string; to: string; active: boolean }) {
+function NavItem({ icon, label, to, active, badge }: { icon: any; label: string; to: string; active: boolean; badge?: number }) {
   return (
     <Box as={RouterLink} to={to} w="full" display="block" _hover={{ textDecoration: 'none' }}>
       <HStack
@@ -31,9 +42,15 @@ function NavItem({ icon, label, to, active }: { icon: any; label: string; to: st
         _hover={{ bg: active ? 'primary.700' : 'gray.100' }}
         transition="all 0.15s"
         spacing={3}
+        position="relative"
       >
         <Icon as={icon} boxSize={5} />
-        <Text fontWeight={active ? 700 : 500} fontSize="sm">{label}</Text>
+        <Text fontWeight={active ? 700 : 500} fontSize="sm" flex={1}>{label}</Text>
+        {badge && badge > 0 ? (
+          <Badge colorScheme="red" borderRadius="full" fontSize="xs" px={1.5} minW="18px" textAlign="center">
+            {badge > 99 ? '99+' : badge}
+          </Badge>
+        ) : null}
       </HStack>
     </Box>
   )
@@ -44,24 +61,31 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
   const navigate = useNavigate()
   const location = useLocation()
   const role = user?.role ?? 'beneficiary'
+  const [unreadMsgs, setUnreadMsgs] = useState(0)
+
+  useEffect(() => {
+    const fetch = () => messagesApi.unreadCount().then(r => setUnreadMsgs(r.data.unread_count)).catch(() => {})
+    fetch()
+    const interval = setInterval(fetch, 15000)
+    return () => clearInterval(interval)
+  }, [])
 
   const navItems = [
-    { icon: MdDashboard,    label: 'Dashboard',    to: '/dashboard',              roles: ['superadmin', 'admin', 'beneficiary'] },
-    { icon: MdWork,         label: 'Programs',     to: '/dashboard/programs',     roles: ['superadmin', 'admin', 'beneficiary'] },
-    { icon: MdAssignment,   label: 'Applications', to: '/dashboard/applications', roles: ['superadmin', 'admin', 'beneficiary'] },
-    { icon: MdPeople,       label: 'Users',        to: '/dashboard/users',        roles: ['superadmin', 'admin'] },
-    { icon: MdBarChart,     label: 'Reports',      to: '/dashboard/reports',      roles: ['superadmin', 'admin'] },
-    { icon: MdPerson,       label: 'My Profile',   to: '/dashboard/profile',      roles: ['superadmin', 'admin', 'beneficiary'] },
+    { icon: MdDashboard,    label: 'Dashboard',           to: '/dashboard',                       roles: ['superadmin', 'admin', 'beneficiary'] },
+    { icon: MdWork,         label: 'Programs',            to: '/dashboard/programs',              roles: ['superadmin', 'admin', 'beneficiary'] },
+    { icon: MdAssignment,   label: 'Applications',        to: '/dashboard/applications',          roles: ['superadmin', 'admin', 'beneficiary'] },
+    { icon: MdDescription,  label: 'MSWD Forms',          to: '/dashboard/forms',                 roles: ['superadmin', 'admin', 'beneficiary'] },
+    { icon: MdTrendingUp,   label: 'Livelihood Updates',  to: '/dashboard/livelihood-updates',    roles: ['superadmin', 'admin', 'beneficiary'] },
+    { icon: MdChat,         label: 'Messages',            to: '/dashboard/messages',              roles: ['superadmin', 'admin', 'beneficiary'], msgBadge: true },
+    { icon: MdPeople,       label: 'Users',               to: '/dashboard/users',                 roles: ['superadmin', 'admin'] },
+    { icon: MdBarChart,     label: 'Reports',             to: '/dashboard/reports',               roles: ['superadmin', 'admin'] },
+    { icon: MdPerson,       label: 'My Profile',          to: '/dashboard/profile',               roles: ['superadmin', 'admin', 'beneficiary'] },
   ].filter((item) => item.roles.includes(role))
 
-  const handleLogout = () => {
-    logout()
-    navigate('/')
-  }
+  const handleLogout = () => { logout(); navigate('/') }
 
   return (
     <Flex direction="column" h="full" bg="white" borderRightWidth={1} py={4}>
-      {/* Brand */}
       <VStack px={4} pb={4} align="start" spacing={1}>
         <HStack spacing={3} mb={2}>
           <Box bg="primary.600" p={2} borderRadius="lg">
@@ -75,7 +99,6 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
         <Divider />
       </VStack>
 
-      {/* Nav Items */}
       <VStack flex={1} px={3} spacing={1} overflowY="auto" align="stretch">
         {navItems.map((item) => (
           <NavItem
@@ -83,18 +106,13 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
             icon={item.icon}
             label={item.label}
             to={item.to}
-            active={
-              item.to === '/dashboard'
-                ? location.pathname === '/dashboard'
-                : location.pathname.startsWith(item.to)
-            }
+            active={item.to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(item.to)}
+            badge={(item as any).msgBadge ? unreadMsgs : undefined}
           />
         ))}
       </VStack>
 
       <Divider />
-
-      {/* User Info + Logout */}
       <Box px={4} pt={4}>
         <HStack spacing={3} mb={3}>
           <Avatar size="sm" name={`${user?.first_name} ${user?.last_name}`} bg="primary.500" color="white" />
@@ -107,16 +125,8 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
             </Badge>
           </VStack>
         </HStack>
-        <Button
-          leftIcon={<MdLogout />}
-          variant="ghost"
-          size="sm"
-          w="full"
-          colorScheme="red"
-          justifyContent="flex-start"
-          borderRadius="lg"
-          onClick={handleLogout}
-        >
+        <Button leftIcon={<MdLogout />} variant="ghost" size="sm" w="full" colorScheme="red"
+          justifyContent="flex-start" borderRadius="lg" onClick={handleLogout}>
           Sign Out
         </Button>
       </Box>
@@ -139,24 +149,18 @@ export default function DashboardPage() {
 
   return (
     <Flex h="100vh" overflow="hidden">
-      {/* Desktop Sidebar */}
       <Box w="240px" flexShrink={0} display={{ base: 'none', md: 'flex' }} flexDirection="column">
         <Sidebar />
       </Box>
 
-      {/* Mobile Drawer */}
       <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent maxW="240px">
-          <DrawerBody p={0}>
-            <Sidebar onClose={onClose} />
-          </DrawerBody>
+          <DrawerBody p={0}><Sidebar onClose={onClose} /></DrawerBody>
         </DrawerContent>
       </Drawer>
 
-      {/* Main Content */}
       <Flex flex={1} direction="column" overflow="hidden">
-        {/* Mobile Top Bar */}
         <HStack display={{ base: 'flex', md: 'none' }} px={4} py={3} bg="white" borderBottomWidth={1} shadow="sm">
           <IconButton aria-label="Menu" icon={<MdMenu />} variant="ghost" onClick={onOpen} size="sm" />
           <Text fontWeight={700} color="primary.700" fontSize="sm">MSWD Livelihood</Text>
@@ -169,6 +173,14 @@ export default function DashboardPage() {
             <Route index element={<MainContent />} />
             <Route path="programs" element={<ProgramsPage />} />
             <Route path="applications" element={<ApplicationsPage />} />
+            <Route path="forms" element={<FormsPage />} />
+            <Route path="forms/new/assessment" element={<MSWDForm3Page />} />
+            <Route path="forms/new/intake" element={<IntakeAssessmentPage />} />
+            <Route path="forms/new/social-case-study" element={<SocialCaseStudyPage />} />
+            <Route path="forms/:formId/documents" element={<DocumentUploadPage />} />
+            <Route path="forms/:formId" element={<FormDetailPage />} />
+            <Route path="livelihood-updates" element={<LivelihoodUpdatesPage />} />
+            <Route path="messages" element={<MessagesPage />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="reports" element={<ReportsPage />} />
             <Route path="profile" element={<ProfilePage />} />

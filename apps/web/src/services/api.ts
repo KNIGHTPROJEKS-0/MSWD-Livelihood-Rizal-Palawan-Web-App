@@ -79,3 +79,54 @@ export const usersApi = {
     apiClient.patch(`/users/${id}/role?role=${role}`),
   toggleActive: (id: number) => apiClient.patch(`/users/${id}/toggle-active`),
 }
+
+export const formsApi = {
+  list: () => apiClient.get('/forms/'),
+  create: (data: { form_type: string; form_data?: object }) =>
+    apiClient.post('/forms/', data),
+  get: (id: number) => apiClient.get(`/forms/${id}`),
+  update: (id: number, form_data: object) =>
+    apiClient.put(`/forms/${id}`, { form_data }),
+  submit: (id: number) => apiClient.post(`/forms/${id}/submit`),
+  review: (id: number, status: string, admin_notes?: string) =>
+    apiClient.patch(`/forms/${id}/review`, { status, admin_notes }),
+  uploadDocument: (id: number, document_type: string, file: File) => {
+    const fd = new FormData()
+    fd.append('document_type', document_type)
+    fd.append('file', file)
+    const token = useAuthStore.getState().token
+    return axios.post(`${BASE_URL}/forms/${id}/documents`, fd, {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : '',
+      },
+    })
+  },
+  listDocuments: (id: number) => apiClient.get(`/forms/${id}/documents`),
+}
+
+export const livelihoodUpdatesApi = {
+  list: () => apiClient.get('/livelihood-updates/'),
+  create: (data: { title: string; description?: string; program_id?: number; file?: File }) => {
+    const fd = new FormData()
+    fd.append('title', data.title)
+    if (data.description) fd.append('description', data.description)
+    if (data.program_id) fd.append('program_id', String(data.program_id))
+    if (data.file) fd.append('file', data.file)
+    const token = useAuthStore.getState().token
+    return axios.post(`${BASE_URL}/livelihood-updates/`, fd, {
+      headers: { Authorization: token ? `Bearer ${token}` : '' },
+    })
+  },
+  get: (id: number) => apiClient.get(`/livelihood-updates/${id}`),
+  review: (id: number, admin_notes: string) =>
+    apiClient.patch(`/livelihood-updates/${id}/review`, { admin_notes }),
+}
+
+export const messagesApi = {
+  staff: () => apiClient.get('/messages/staff'),
+  conversations: () => apiClient.get('/messages/conversations'),
+  getWith: (partnerId: number) => apiClient.get(`/messages/with/${partnerId}`),
+  send: (receiver_id: number, content: string) =>
+    apiClient.post('/messages/', { receiver_id, content }),
+  unreadCount: () => apiClient.get('/messages/unread-count'),
+}
