@@ -4,7 +4,10 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
-  resolve: { alias: { '@': path.resolve(__dirname, './src') } },
+  resolve: {
+    alias: { '@': path.resolve(__dirname, './src') },
+    dedupe: ['react', 'react-dom', '@emotion/react', '@emotion/styled', 'framer-motion'],
+  },
   server: {
     port: 5000,
     host: '0.0.0.0',
