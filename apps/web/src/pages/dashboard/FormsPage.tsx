@@ -1,15 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Box, VStack, HStack, Text, Badge, Button, Icon, Card, CardBody,
   SimpleGrid, Heading, Divider, Flex, Skeleton, useToast, Modal,
   ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton,
-  useDisclosure, Textarea, Select
+  useDisclosure, Textarea, Select, Input, Spinner, Tooltip
 } from '@chakra-ui/react'
 import {
   MdDescription, MdAdd, MdCheckCircle, MdPendingActions, MdCancel,
-  MdVisibility, MdSchedule, MdAssignment, MdFactCheck, MdUndo
+  MdVisibility, MdSchedule, MdAssignment, MdFactCheck, MdUndo,
+  MdCloudUpload, MdImage, MdEdit
 } from 'react-icons/md'
-import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 import { formsApi } from '../../services/api'
 import { useAuthStore } from '../../store/authStore'
 
@@ -46,17 +47,53 @@ const STATUS_LABEL: Record<string, string> = {
   returned: 'Returned for Revision',
 }
 
+const FORM_TYPES = [
+  {
+    key: 'assessment_tool',
+    label: 'MSWD Form No. 3',
+    sub: 'Individual/Family Assessment Tool',
+    icon: MdAssignment,
+    color: 'blue',
+    to: '/dashboard/forms/new/assessment',
+  },
+  {
+    key: 'intake_assessment',
+    label: 'Intake/Assessment Form',
+    sub: 'Social Case Record & Assessment',
+    icon: MdDescription,
+    color: 'teal',
+    to: '/dashboard/forms/new/intake',
+  },
+  {
+    key: 'social_case_study',
+    label: 'Social Case Study Report',
+    sub: 'Comprehensive Case Study',
+    icon: MdFactCheck,
+    color: 'purple',
+    to: '/dashboard/forms/new/social-case-study',
+  },
+]
+
 export default function FormsPage() {
   const { user } = useAuthStore()
-  const navigate = useNavigate()
   const toast = useToast()
   const { isOpen: reviewOpen, onOpen: openReview, onClose: closeReview } = useDisclosure()
+
   const [forms, setForms] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [reviewing, setReviewing] = useState<any>(null)
   const [reviewStatus, setReviewStatus] = useState('under_review')
   const [reviewNotes, setReviewNotes] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [uploadingType, setUploadingType] = useState<string | null>(null)
+
+  const formOptionsRef = useRef<HTMLDivElement>(null)
+  const fileInputRefs: Record<string, React.RefObject<HTMLInputElement>> = {
+    assessment_tool: useRef<HTMLInputElement>(null),
+    intake_assessment: useRef<HTMLInputElement>(null),
+    social_case_study: useRef<HTMLInputElement>(null),
+  }
+
   const isAdmin = user?.role === 'admin' || user?.role === 'superadmin'
 
   const load = () => {
@@ -65,6 +102,40 @@ export default function FormsPage() {
   }
 
   useEffect(() => { load() }, [])
+
+  const handleNewFormClick = () => {
+    formOptionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const handleQuickUpload = async (formType: string, file: File) => {
+    setUploadingType(formType)
+    try {
+      const createRes = await formsApi.create({ form_type: formType, form_data: {} })
+      const formId = createRes.data.id
+      await formsApi.uploadDocument(formId, 'filled_form', file)
+      await formsApi.submit(formId)
+      toast({
+        title: 'Form uploaded & submitted!',
+        description: 'Your filled form has been submitted for MSWD review.',
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+      })
+      load()
+    } catch (err: any) {
+      toast({
+        title: 'Upload failed',
+        description: err.response?.data?.detail || 'Please try again.',
+        status: 'error',
+        duration: 4000,
+      })
+    } finally {
+      setUploadingType(null)
+      if (fileInputRefs[formType]?.current) {
+        fileInputRefs[formType].current!.value = ''
+      }
+    }
+  }
 
   const handleReview = async () => {
     if (!reviewing) return
@@ -96,11 +167,17 @@ export default function FormsPage() {
           <Text fontSize="sm" color="gray.500">
             {isAdmin
               ? 'Review and process form submissions from beneficiaries'
-              : 'Submit official MSWD forms for social welfare assistance'}
+              : 'Submit official MSWD forms — fill out digitally or upload a photo/file of a physically filled form'}
           </Text>
         </VStack>
         {!isAdmin && (
-          <Button as={RouterLink} to="/dashboard/forms" colorScheme="primary" leftIcon={<MdAdd />} size="sm" borderRadius="lg">
+          <Button
+            colorScheme="primary"
+            leftIcon={<MdAdd />}
+            size="sm"
+            borderRadius="lg"
+            onClick={handleNewFormClick}
+          >
             New Form
           </Button>
         )}
@@ -124,30 +201,44 @@ export default function FormsPage() {
 
       {/* New Form Options (beneficiary only) */}
       {!isAdmin && (
-        <Card borderRadius="xl" boxShadow="sm" borderTopWidth={3} borderTopColor="primary.400">
+        <Card
+          ref={formOptionsRef}
+          borderRadius="xl"
+          boxShadow="sm"
+          borderTopWidth={3}
+          borderTopColor="primary.400"
+          scrollMarginTop="80px"
+        >
           <CardBody>
-            <Text fontWeight={700} color="gray.700" mb={4} fontSize="sm">Submit a New Form</Text>
+            <Text fontWeight={700} color="gray.700" mb={1} fontSize="sm">Submit a New Form</Text>
+            <Text fontSize="xs" color="gray.400" mb={4}>
+              Fill out a form digitally, or upload a photo/scan of a physically filled form (JPG, PNG, PDF, DOCX).
+            </Text>
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={3}>
-              {[
-                { key: 'assessment', label: 'MSWD Form No. 3', sub: 'Individual/Family Assessment Tool', icon: MdAssignment, color: 'blue', to: '/dashboard/forms/new/assessment' },
-                { key: 'intake', label: 'Intake/Assessment Form', sub: 'Social Case Record & Assessment', icon: MdDescription, color: 'teal', to: '/dashboard/forms/new/intake' },
-                { key: 'social-case-study', label: 'Social Case Study Report', sub: 'Comprehensive Case Study', icon: MdFactCheck, color: 'purple', to: '/dashboard/forms/new/social-case-study' },
-              ].map(f => (
+              {FORM_TYPES.map(f => (
                 <Box
                   key={f.key}
-                  as={RouterLink}
-                  to={f.to}
                   p={4}
                   borderRadius="xl"
                   border="2px solid"
                   borderColor={`${f.color}.200`}
                   bg={`${f.color}.50`}
-                  _hover={{ borderColor: `${f.color}.400`, bg: `${f.color}.100`, textDecoration: 'none', transform: 'translateY(-1px)' }}
                   transition="all 0.2s"
-                  display="block"
-                  cursor="pointer"
                 >
-                  <HStack spacing={3} align="start">
+                  {/* Hidden file input */}
+                  <Input
+                    type="file"
+                    ref={fileInputRefs[f.key]}
+                    display="none"
+                    accept="image/*,.pdf,.doc,.docx"
+                    onChange={e => {
+                      const file = e.target.files?.[0]
+                      if (file) handleQuickUpload(f.key, file)
+                    }}
+                  />
+
+                  {/* Form type header */}
+                  <HStack spacing={3} align="start" mb={3}>
                     <Box bg={`${f.color}.100`} p={2} borderRadius="lg">
                       <Icon as={f.icon} color={`${f.color}.600`} boxSize={5} />
                     </Box>
@@ -156,9 +247,60 @@ export default function FormsPage() {
                       <Text fontSize="xs" color={`${f.color}.600`}>{f.sub}</Text>
                     </VStack>
                   </HStack>
+
+                  {/* Action buttons */}
+                  <VStack spacing={2} align="stretch">
+                    <Tooltip label="Fill out the form digitally on this platform" placement="top" hasArrow>
+                      <Button
+                        as={RouterLink}
+                        to={f.to}
+                        size="xs"
+                        colorScheme={f.color}
+                        variant="solid"
+                        leftIcon={<MdEdit />}
+                        borderRadius="lg"
+                        w="full"
+                      >
+                        Fill Out Digitally
+                      </Button>
+                    </Tooltip>
+                    <Tooltip
+                      label="Upload a photo, scan, or digital file of a physically filled form"
+                      placement="bottom"
+                      hasArrow
+                    >
+                      <Button
+                        size="xs"
+                        colorScheme={f.color}
+                        variant="outline"
+                        leftIcon={
+                          uploadingType === f.key
+                            ? <Spinner size="xs" />
+                            : <MdCloudUpload />
+                        }
+                        borderRadius="lg"
+                        w="full"
+                        isLoading={uploadingType === f.key}
+                        loadingText="Uploading…"
+                        onClick={() => fileInputRefs[f.key]?.current?.click()}
+                      >
+                        Upload Filled Form
+                      </Button>
+                    </Tooltip>
+                  </VStack>
                 </Box>
               ))}
             </SimpleGrid>
+
+            {/* Upload instructions */}
+            <Box mt={4} p={3} bg="blue.50" borderRadius="lg" border="1px solid" borderColor="blue.100">
+              <HStack spacing={2} align="start">
+                <Icon as={MdImage} color="blue.400" boxSize={4} mt={0.5} flexShrink={0} />
+                <Text fontSize="xs" color="blue.700" lineHeight={1.6}>
+                  <b>Upload Filled Form:</b> Take a clear photo of your physically filled form, or upload a scanned PDF or Word document. Accepted formats: JPG, PNG, PDF, DOC, DOCX.
+                </Text>
+              </HStack>
+            </Box>
           </CardBody>
         </Card>
       )}
@@ -208,7 +350,7 @@ export default function FormsPage() {
                           </Badge>
                           {form.documents?.length > 0 && (
                             <Badge colorScheme="teal" borderRadius="full" fontSize="xs">
-                              {form.documents.length} document{form.documents.length !== 1 ? 's' : ''}
+                              {form.documents.length} attachment{form.documents.length !== 1 ? 's' : ''}
                             </Badge>
                           )}
                           <Text fontSize="10px" color="gray.400">
@@ -236,7 +378,7 @@ export default function FormsPage() {
                           to={`/dashboard/forms/${form.id}/documents`}
                           size="xs" colorScheme="teal" borderRadius="lg"
                         >
-                          Upload Docs
+                          Add Attachment
                         </Button>
                       )}
                       {!isAdmin && (form.status === 'draft' || form.status === 'returned') && (
