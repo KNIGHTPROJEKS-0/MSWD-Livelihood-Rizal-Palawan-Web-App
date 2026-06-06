@@ -16,9 +16,10 @@ def get_stats(db: Session = Depends(get_db), current_user=Depends(get_current_us
     from app.models.program import Program
     from app.models.application import Application
 
-    total_users = db.query(func.count(User.id)).scalar()
-    total_beneficiaries = db.query(func.count(User.id)).filter(User.role == "beneficiary").scalar()
+    total_users = db.query(func.count(User.id)).filter(User.is_active == True).scalar()
+    total_beneficiaries = db.query(func.count(User.id)).filter(User.role == "beneficiary", User.is_active == True).scalar()
     total_admins = db.query(func.count(User.id)).filter(User.role == "admin").scalar()
+    pending_registrations = db.query(func.count(User.id)).filter(User.role == "beneficiary", User.is_active == False).scalar()
     total_programs = db.query(func.count(Program.id)).filter(Program.status == "active").scalar()
     pending_apps = db.query(func.count(Application.id)).filter(Application.status == "pending").scalar()
     approved_apps = db.query(func.count(Application.id)).filter(Application.status == "approved").scalar()
@@ -29,6 +30,7 @@ def get_stats(db: Session = Depends(get_db), current_user=Depends(get_current_us
         "total_users": total_users,
         "total_beneficiaries": total_beneficiaries,
         "total_admins": total_admins,
+        "pending_registrations": pending_registrations,
         "active_programs": total_programs,
         "pending_applications": pending_apps,
         "approved_applications": approved_apps,

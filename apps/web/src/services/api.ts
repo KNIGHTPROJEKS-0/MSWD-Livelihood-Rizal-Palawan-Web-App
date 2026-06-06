@@ -62,6 +62,9 @@ export const adminApi = {
 
 export const usersApi = {
   list: () => apiClient.get('/users/'),
+  pending: () => apiClient.get('/users/pending'),
+  approve: (id: number) => apiClient.patch(`/users/${id}/approve`),
+  reject: (id: number) => apiClient.patch(`/users/${id}/reject`),
   update: (id: number, data: object) => apiClient.put(`/users/${id}`, data),
   updateRole: (id: number, role: string) =>
     apiClient.patch(`/users/${id}/role?role=${role}`),

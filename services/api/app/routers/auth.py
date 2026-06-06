@@ -69,7 +69,7 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
         phone=data.phone,
         barangay=data.barangay,
         role="beneficiary",
-        is_active=True,
+        is_active=False,
         is_verified=False,
     )
     db.add(user)
@@ -85,7 +85,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Incorrect email or password")
     if not user.is_active:
-        raise HTTPException(status_code=400, detail="Account is inactive")
+        raise HTTPException(status_code=403, detail="Your account is pending approval. Please wait for an MSWD Admin to activate your account.")
     token = create_access_token({"sub": str(user.id)}, timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
     return {
         "access_token": token,
@@ -109,7 +109,7 @@ def login_json(data: LoginRequest, db: Session = Depends(get_db)):
     if not user or not verify_password(data.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Incorrect email or password")
     if not user.is_active:
-        raise HTTPException(status_code=400, detail="Account is inactive")
+        raise HTTPException(status_code=403, detail="Your account is pending approval. Please wait for an MSWD Admin to activate your account.")
     token = create_access_token({"sub": str(user.id)}, timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
     return {
         "access_token": token,

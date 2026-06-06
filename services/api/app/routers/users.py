@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 
 from app.core.database import get_db
 from app.routers.auth import get_current_user
@@ -21,7 +21,7 @@ def list_users(db: Session = Depends(get_db), current_user=Depends(get_current_u
     if current_user.role not in ("superadmin", "admin"):
         raise HTTPException(status_code=403, detail="Not authorized")
     from app.models.user import User
-    users = db.query(User).all()
+    users = db.query(User).filter(User.is_active == True).all()
     return [
         {
             "id": u.id,
@@ -35,6 +35,55 @@ def list_users(db: Session = Depends(get_db), current_user=Depends(get_current_u
         }
         for u in users
     ]
+
+
+@router.get("/pending")
+def list_pending_users(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    if current_user.role not in ("superadmin", "admin"):
+        raise HTTPException(status_code=403, detail="Not authorized")
+    from app.models.user import User
+    users = db.query(User).filter(User.is_active == False, User.role == "beneficiary").order_by(User.created_at.desc()).all()
+    return [
+        {
+            "id": u.id,
+            "email": u.email,
+            "first_name": u.first_name,
+            "last_name": u.last_name,
+            "role": u.role,
+            "barangay": u.barangay,
+            "phone": u.phone,
+            "is_active": u.is_active,
+            "created_at": str(u.created_at) if u.created_at else None,
+        }
+        for u in users
+    ]
+
+
+@router.patch("/{user_id}/approve")
+def approve_user(user_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    if current_user.role not in ("superadmin", "admin"):
+        raise HTTPException(status_code=403, detail="Not authorized")
+    from app.models.user import User
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user.is_active = True
+    user.is_verified = True
+    db.commit()
+    return {"message": f"{user.first_name or user.email} has been approved and can now log in."}
+
+
+@router.patch("/{user_id}/reject")
+def reject_user(user_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    if current_user.role not in ("superadmin", "admin"):
+        raise HTTPException(status_code=403, detail="Not authorized")
+    from app.models.user import User
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    db.delete(user)
+    db.commit()
+    return {"message": "Registration rejected and removed."}
 
 
 @router.put("/{user_id}")
@@ -63,6 +112,8 @@ def update_user_role(user_id: int, role: str, db: Session = Depends(get_db), cur
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     user.role = role
+    if role in ("admin", "superadmin"):
+        user.is_active = True
     db.commit()
     return {"message": f"Role updated to {role}"}
 

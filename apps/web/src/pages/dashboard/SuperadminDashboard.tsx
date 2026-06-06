@@ -90,10 +90,10 @@ export default function SuperadminDashboard() {
       {/* Stats */}
       <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
         {[
-          { label: 'Total Users', value: stats?.total_users, icon: MdPeople, color: 'red', sub: `${stats?.total_admins ?? 0} admins` },
-          { label: 'Beneficiaries', value: stats?.total_beneficiaries, icon: MdSupervisorAccount, color: 'orange', sub: 'registered' },
+          { label: 'Active Users', value: stats?.total_users, icon: MdPeople, color: 'red', sub: `${stats?.total_admins ?? 0} admins` },
+          { label: 'Beneficiaries', value: stats?.total_beneficiaries, icon: MdSupervisorAccount, color: 'orange', sub: 'approved & active' },
           { label: 'Active Programs', value: stats?.active_programs, icon: MdWork, color: 'green', sub: 'available' },
-          { label: 'Total Applications', value: stats?.total_applications, icon: MdAssignment, color: 'blue', sub: `${stats?.pending_applications ?? 0} pending` },
+          { label: 'Pending Registrations', value: stats?.pending_registrations, icon: MdAssignment, color: 'purple', sub: 'awaiting approval' },
         ].map((s) => (
           <Card key={s.label} borderRadius="xl" boxShadow="sm" _hover={{ boxShadow: 'md' }} transition="all 0.2s">
             <CardBody>

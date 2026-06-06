@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react'
 import {
   MdWork, MdAssignment, MdCheckCircle, MdPendingActions,
-  MdManageAccounts, MdRateReview, MdNotifications
+  MdManageAccounts, MdRateReview, MdNotifications, MdPersonAdd
 } from 'react-icons/md'
 import { adminApi } from '../../services/api'
 import { useAuthStore } from '../../store/authStore'
@@ -75,7 +75,18 @@ export default function AdminDashboard() {
         </HStack>
       </Box>
 
-      {/* Pending Alert */}
+      {/* Pending Alerts */}
+      {!loading && stats?.pending_registrations > 0 && (
+        <Alert status="info" borderRadius="xl" fontSize="sm">
+          <AlertIcon as={MdPersonAdd} />
+          <Text>
+            <strong>{stats.pending_registrations} new beneficiar{stats.pending_registrations === 1 ? 'y has' : 'ies have'}</strong> registered and need{stats.pending_registrations === 1 ? 's' : ''} approval.
+          </Text>
+          <Button as={RouterLink} to="/dashboard/users" size="xs" colorScheme="blue" ml="auto" borderRadius="lg">
+            Review Now
+          </Button>
+        </Alert>
+      )}
       {!loading && stats?.pending_applications > 0 && (
         <Alert status="warning" borderRadius="xl" fontSize="sm">
           <AlertIcon />
@@ -92,9 +103,9 @@ export default function AdminDashboard() {
       <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
         {[
           { label: 'Active Programs', value: stats?.active_programs, icon: MdWork, color: 'blue', sub: 'available now' },
-          { label: 'Pending Reviews', value: stats?.pending_applications, icon: MdPendingActions, color: 'orange', sub: 'need action' },
-          { label: 'Approved', value: stats?.approved_applications, icon: MdCheckCircle, color: 'green', sub: 'this period' },
-          { label: 'Total Applications', value: stats?.total_applications, icon: MdAssignment, color: 'purple', sub: 'all time' },
+          { label: 'Pending Registrations', value: stats?.pending_registrations, icon: MdPersonAdd, color: 'purple', sub: 'need approval' },
+          { label: 'Pending Applications', value: stats?.pending_applications, icon: MdPendingActions, color: 'orange', sub: 'need review' },
+          { label: 'Approved Applications', value: stats?.approved_applications, icon: MdCheckCircle, color: 'green', sub: 'granted' },
         ].map((s) => (
           <Card key={s.label} borderRadius="xl" boxShadow="sm" _hover={{ boxShadow: 'md' }} transition="all 0.2s">
             <CardBody>
