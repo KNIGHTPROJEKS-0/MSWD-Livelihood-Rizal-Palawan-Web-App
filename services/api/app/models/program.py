@@ -25,3 +25,4 @@ class Program(Base):
     updated_at = Column(DateTime, onupdate=func.now())
 
     applications = relationship("Application", back_populates="program", lazy="dynamic")
+    beneficiaries = relationship("Beneficiary", foreign_keys="[Beneficiary.program_id]", back_populates="program", lazy="dynamic")

@@ -20,7 +20,9 @@ class User(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
 
-    applications = relationship("Application", foreign_keys="Application.user_id", back_populates="user", lazy="dynamic")
+    applications = relationship("Application", foreign_keys="[Application.user_id]", back_populates="user", lazy="dynamic")
+    beneficiaries = relationship("Beneficiary", foreign_keys="[Beneficiary.user_id]", back_populates="user", lazy="dynamic")
+    audit_logs = relationship("AuditLog", foreign_keys="[AuditLog.user_id]", back_populates="user", lazy="dynamic")
 
     @property
     def full_name(self):

@@ -15,10 +15,12 @@ from app.core.database import engine, Base, SessionLocal
 from app.models.user import User
 from app.models.program import Program
 from app.models.application import Application
+from app.models.beneficiary import Beneficiary
 from app.models.case_form import CaseForm
 from app.models.form_document import FormDocument
 from app.models.livelihood_update import LivelihoodUpdate
 from app.models.message import Message
+from app.models.audit import AuditLog
 
 from app.routers import auth, users, programs, applications, admin
 from app.routers import forms, livelihood_updates, messages
@@ -60,25 +62,54 @@ def root():
     return {"message": "MSWD Livelihood Rizal Palawan API", "version": "1.0.0"}
 
 
-def seed_superuser():
-    from app.models.user import User
+def seed_users():
     from app.core.security import get_password_hash
     db = SessionLocal()
     try:
-        existing = db.query(User).filter(User.email == settings.FIRST_SUPERUSER_EMAIL).first()
-        if not existing:
-            superuser = User(
-                email=settings.FIRST_SUPERUSER_EMAIL,
-                hashed_password=get_password_hash(settings.FIRST_SUPERUSER_PASSWORD),
-                first_name="System",
-                last_name="Administrator",
-                role="superadmin",
-                is_active=True,
-                is_verified=True,
-            )
-            db.add(superuser)
-            db.commit()
-            print(f"Superuser created: {settings.FIRST_SUPERUSER_EMAIL}")
+        accounts = [
+            {
+                "email": "admin@mswd.gov.ph",
+                "password": "Admin@MSWD2024",
+                "first_name": "System",
+                "last_name": "Administrator",
+                "role": "superadmin",
+                "is_active": True,
+                "is_verified": True,
+            },
+            {
+                "email": "staff@mswd.gov.ph",
+                "password": "Staff@MSWD2024",
+                "first_name": "Juan",
+                "last_name": "Dela Cruz",
+                "role": "admin",
+                "is_active": True,
+                "is_verified": True,
+            },
+            {
+                "email": "ana.santos@mswd.ph",
+                "password": "Beneficiary@123",
+                "first_name": "Ana",
+                "last_name": "Santos",
+                "role": "beneficiary",
+                "is_active": True,
+                "is_verified": True,
+            },
+        ]
+        for acct in accounts:
+            existing = db.query(User).filter(User.email == acct["email"]).first()
+            if not existing:
+                user = User(
+                    email=acct["email"],
+                    hashed_password=get_password_hash(acct["password"]),
+                    first_name=acct["first_name"],
+                    last_name=acct["last_name"],
+                    role=acct["role"],
+                    is_active=acct["is_active"],
+                    is_verified=acct["is_verified"],
+                )
+                db.add(user)
+                print(f"Seeded account: {acct['email']} ({acct['role']})")
+        db.commit()
     except Exception as e:
         print(f"Seed error: {e}")
         db.rollback()
@@ -87,8 +118,6 @@ def seed_superuser():
 
 
 def seed_programs():
-    from app.models.program import Program
-    from app.models.user import User
     db = SessionLocal()
     try:
         count = db.query(Program).count()
@@ -114,5 +143,5 @@ def seed_programs():
         db.close()
 
 
-seed_superuser()
+seed_users()
 seed_programs()
