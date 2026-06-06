@@ -10,8 +10,8 @@ import { MdArrowBack, MdCheckCircle, MdSchedule, MdPerson } from 'react-icons/md
 import { authApi } from '../../services/api'
 
 const BARANGAYS = [
-  'Bunog','Campong Ulay','Candawaga','Canipaan','Culasian',
-  'Iraan','Latud','Panalingaan','Punta Baja','Ransang','Taburi',
+  'Bunog', 'Iraan', 'Punta Baja', 'Campung-Ulay', 'Ransang',
+  'Culasian', 'Candawaga', 'Panalingaan', 'Taburi', 'Canipaan', 'Latud',
 ]
 
 export default function RegisterPage() {

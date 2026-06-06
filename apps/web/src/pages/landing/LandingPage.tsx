@@ -31,8 +31,17 @@ const NAV_LINKS = [
 ]
 
 const BARANGAYS = [
-  'Bunog', 'Campong Ulay', 'Candawaga', 'Canipaan', 'Culasian',
-  'Iraan', 'Latud', 'Panalingaan', 'Punta Baja', 'Ransang', 'Taburi',
+  { name: 'Bunog',        icon: '🌊', grad: ['blue.400',   'cyan.500']  },
+  { name: 'Iraan',        icon: '🌾', grad: ['green.400',  'teal.500']  },
+  { name: 'Punta Baja',   icon: '⛵', grad: ['cyan.400',   'blue.500']  },
+  { name: 'Campung-Ulay', icon: '🏘️', grad: ['teal.400',   'green.500'] },
+  { name: 'Ransang',      icon: '🐠', grad: ['blue.500',   'cyan.400']  },
+  { name: 'Culasian',     icon: '🌿', grad: ['green.500',  'lime.400']  },
+  { name: 'Candawaga',    icon: '🌺', grad: ['pink.400',   'red.400']   },
+  { name: 'Panalingaan',  icon: '🌲', grad: ['green.600',  'teal.400']  },
+  { name: 'Taburi',       icon: '🏝️', grad: ['cyan.500',   'teal.400']  },
+  { name: 'Canipaan',     icon: '🌱', grad: ['teal.400',   'green.400'] },
+  { name: 'Latud',        icon: '⛰️', grad: ['gray.500',   'blue.600']  },
 ]
 
 const PROGRAMS = [
@@ -379,28 +388,29 @@ const LandingPage = () => {
             </Text>
           </VStack>
 
-          <SimpleGrid columns={{ base: 2, sm: 3, md: 4, lg: 6 }} spacing={3}>
-            {BARANGAYS.map((name, i) => (
+          <SimpleGrid columns={{ base: 2, sm: 3, md: 4, lg: 6 }} spacing={4}>
+            {BARANGAYS.map((b) => (
               <Box
-                key={name}
+                key={b.name}
                 bg="white"
                 border="1px solid"
                 borderColor="gray.200"
-                borderRadius="xl"
-                p={4}
+                borderRadius="2xl"
+                p={5}
                 textAlign="center"
-                _hover={{ borderColor: 'blue.400', boxShadow: 'md', transform: 'translateY(-2px)' }}
-                transition="all 0.2s"
+                _hover={{ borderColor: 'blue.300', boxShadow: 'lg', transform: 'translateY(-3px)' }}
+                transition="all 0.25s"
                 cursor="default"
               >
                 <Box
-                  w={8} h={8} borderRadius="full" mx="auto" mb={2}
-                  bgGradient={`linear(to-br, blue.${400 + (i % 3) * 100}, cyan.${400 + (i % 2) * 100})`}
+                  w={14} h={14} borderRadius="full" mx="auto" mb={3}
+                  bgGradient={`linear(to-br, ${b.grad[0]}, ${b.grad[1]})`}
                   display="flex" alignItems="center" justifyContent="center"
+                  boxShadow={`0 4px 14px rgba(0,0,0,0.18)`}
                 >
-                  <Text fontSize="xs" fontWeight={800} color="white">{i + 1}</Text>
+                  <Text fontSize="2xl" lineHeight={1}>{b.icon}</Text>
                 </Box>
-                <Text fontWeight={600} fontSize="sm" color="gray.700">{name}</Text>
+                <Text fontWeight={700} fontSize="sm" color="gray.800" lineHeight={1.3}>{b.name}</Text>
               </Box>
             ))}
           </SimpleGrid>

@@ -9,8 +9,8 @@ import { useAuthStore } from '../../store/authStore'
 import { usersApi } from '../../services/api'
 
 const BARANGAYS = [
-  'Bunog', 'Campong Ulay', 'Candawaga', 'Canipaan', 'Culasian',
-  'Iraan', 'Latud', 'Panalingaan', 'Punta Baja', 'Ransang', 'Taburi',
+  'Bunog', 'Iraan', 'Punta Baja', 'Campung-Ulay', 'Ransang',
+  'Culasian', 'Candawaga', 'Panalingaan', 'Taburi', 'Canipaan', 'Latud',
 ]
 
 const ROLE_COLOR = { superadmin: 'red', admin: 'blue', beneficiary: 'green' } as const

@@ -25,8 +25,8 @@ const ROLE_LABEL: Record<string, string> = {
 }
 
 const BARANGAYS = [
-  'Bunog', 'Campong Ulay', 'Candawaga', 'Canipaan', 'Culasian',
-  'Iraan', 'Latud', 'Panalingaan', 'Punta Baja', 'Ransang', 'Taburi',
+  'Bunog', 'Iraan', 'Punta Baja', 'Campung-Ulay', 'Ransang',
+  'Culasian', 'Candawaga', 'Panalingaan', 'Taburi', 'Canipaan', 'Latud',
 ]
 
 const EMPTY_FORM = {
