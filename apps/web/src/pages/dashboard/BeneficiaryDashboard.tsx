@@ -223,7 +223,7 @@ export default function BeneficiaryDashboard() {
                         color={`${STATUS_COLOR[app.status]}.500`} boxSize={4} flexShrink={0} />
                       <VStack align="start" spacing={0} overflow="hidden">
                         <Text fontSize="sm" fontWeight={600} color="gray.700" noOfLines={1}>
-                          Program #{app.program_id}
+                          {app.program_title || `Program #${app.program_id}`}
                         </Text>
                         <Text fontSize="xs" color="gray.400">{app.applied_at?.slice(0, 10)}</Text>
                       </VStack>
