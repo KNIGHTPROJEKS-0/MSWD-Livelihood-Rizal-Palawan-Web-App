@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "buildCommand": "cd apps/web && pnpm run build",
+  "outputDirectory": "apps/web/dist",
+  "installCommand": "cd apps/web && pnpm install",
+  "framework": null,
+  "experimentalServices": {
+    "web": {
+      "root": "apps/web",
+      "routePrefix": "/",
+      "framework": "vite"
+    },
+    "api": {
+      "root": "services/api",
+      "routePrefix": "/_/api"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/apps/web/$1"
+    }
+  ],
+  "functions": {
+    "api/**/*.py": {
+      "runtime": "python3.9"
+    }
+  },
+  "env": {
+    "DATABASE_URL": "postgresql://neondb_owner:npg_Ig6bZwDe9JUM@ep-morning-shape-aqxfcvv6-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
+    "SECRET_KEY": "R8CZFgJsAsFqkFTv/2xW7sw+931OETgt3AwxQKKnVAS2dYZxqN7rMfssPTFcbYb3l+cEbomKk3c8scT8I21GWw=="
+  }
+}

@@ -1,0 +1,29 @@
+# Vercel Serverless Function Requirements
+# This file is used by Vercel to install dependencies for the API
+
+# ASGI adapter for Vercel
+mangum==0.17.0
+
+# Core FastAPI Framework
+fastapi==0.116.1
+
+# Data Validation & Serialization
+pydantic[email]==2.5.0
+pydantic-core==2.14.1
+pydantic-settings==2.1.0
+
+# Database & ORM
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+
+# Authentication & Security
+python-jose[cryptography]==3.5.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+
+# File Handling & Validation
+python-multipart==0.0.6
+email-validator==2.1.0
+
+# Configuration & Environment
+python-dotenv==1.0.0

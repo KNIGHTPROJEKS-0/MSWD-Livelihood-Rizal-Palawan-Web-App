@@ -3,6 +3,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+# Create uploads directory if it doesn't exist
 os.makedirs("uploads", exist_ok=True)
 
 from fastapi import FastAPI
@@ -25,6 +26,7 @@ from app.models.audit import AuditLog
 from app.routers import auth, users, programs, applications, admin
 from app.routers import forms, livelihood_updates, messages
 
+# Create tables - this is safe to run in serverless as it's idempotent
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -143,5 +145,8 @@ def seed_programs():
         db.close()
 
 
-seed_users()
-seed_programs()
+# Seed functions are disabled in serverless environment
+# They should be run separately in a local development environment
+# Uncomment the following lines to run seeds locally:
+# seed_users()
+# seed_programs()
