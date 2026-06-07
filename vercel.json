@@ -1,32 +1,30 @@
 {
   "version": 2,
-  "buildCommand": "cd apps/web && pnpm run build",
-  "outputDirectory": "apps/web/dist",
-  "installCommand": "cd apps/web && pnpm install",
-  "framework": null,
-  "experimentalServices": {
-    "web": {
-      "root": "apps/web",
-      "routePrefix": "/",
-      "framework": "vite"
+  "builds": [
+    {
+      "src": "apps/web/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     },
-    "api": {
-      "root": "services/api",
-      "routePrefix": "/_/api"
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
     }
-  },
-  "rewrites": [
+  ],
+  "routes": [
     {
-      "source": "/api/:path*",
-      "destination": "/api/index.py"
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
     },
     {
-      "source": "/uploads/:path*",
-      "destination": "/api/index.py"
+      "src": "/uploads/(.*)",
+      "dest": "/api/index.py"
     },
     {
-      "source": "/(.*)",
-      "destination": "/apps/web/$1"
+      "src": "/(.*)",
+      "dest": "/apps/web/$1"
     }
   ],
   "env": {
